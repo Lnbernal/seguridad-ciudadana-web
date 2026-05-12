@@ -1,54 +1,53 @@
 <div class="min-h-screen flex items-center justify-center bg-gray-100">
-
-  <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-
-    <h1 class="text-3xl font-bold mb-6 text-center">
+  <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">
       Iniciar Sesión
-    </h1>
+    </h2>
 
-    <form
-      [formGroup]="form"
-      (ngSubmit)="onSubmit()"
-    >
-
-      <div class="mb-4">
-
+    <form (ngSubmit)="login()" class="space-y-4">
+      <!-- Correo -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Correo
+        </label>
         <input
           type="email"
-          formControlName="correo"
-          placeholder="Correo"
-          class="w-full border p-3 rounded-lg"
-        >
-
+          name="correo"
+          [(ngModel)]="form.correo"
+          required
+          class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
 
-      <div class="mb-4">
-
+      <!-- Contraseña -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Contraseña
+        </label>
         <input
           type="password"
-          formControlName="contraseña"
-          placeholder="Contraseña"
-          class="w-full border p-3 rounded-lg"
-        >
-
+          name="password"
+          [(ngModel)]="form.password"
+          required
+          class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
 
+      <!-- Botón -->
       <button
         type="submit"
-        class="w-full bg-blue-600 text-white py-3 rounded-lg"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
       >
-        Ingresar
+        Iniciar sesión
       </button>
-
     </form>
 
-    <p
-      *ngIf="error"
-      class="text-red-500 text-center mt-4"
-    >
-      {{ error }}
+    <!-- Registro -->
+    <p class="text-center text-sm text-gray-600 mt-6">
+      ¿No tienes cuenta?
+      <a routerLink="/register" class="text-blue-600 hover:underline">
+        Regístrate aquí
+      </a>
     </p>
-
   </div>
-
 </div>

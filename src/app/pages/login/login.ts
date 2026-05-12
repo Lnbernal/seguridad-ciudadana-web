@@ -1,71 +1,53 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-
-import { Router } from '@angular/router';
-
-import { AuthService } from '../../services/auth';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './login.html',
-  styleUrl: './login.css'
+  imports: [FormsModule, RouterLink],
+  templateUrl: './login.html'
 })
 export class Login {
-
-  form: FormGroup;
+  form = {
+    correo: '',
+    password: ''
+  };
 
   error = '';
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
+    private auth: Auth,
     private router: Router
-  ) {
+  ) {}
 
-    this.form = this.fb.group({
+  login(): void {
+    this.error = '';
 
-      correo: ['', [Validators.required, Validators.email]],
+    const payload = {
+      correo: this.form.correo,
+      contraseña: this.form.password
+    };
 
-      contraseña: ['', Validators.required]
+    console.log('Payload enviado:', payload);
 
-    });
+    this.auth.login(payload).subscribe({
+      next: (response: any) => {
+        console.log('Respuesta del servidor:', response);
 
-  }
-
-  onSubmit() {
-
-    if (this.form.invalid) return;
-
-    this.authService.login(this.form.value).subscribe({
-
-      next: (resp) => {
-
-        console.log(resp);
-
-        this.authService.saveToken(resp.token);
+        this.auth.saveSession(response);
 
         this.router.navigate(['/dashboard']);
-
       },
-
       error: (err) => {
+        console.error('Error en login:', err);
 
-        console.error(err);
+        this.error =
+          err?.error?.message || 'Credenciales incorrectas';
 
-        this.error = err.error.message;
-
+        alert(this.error);
       }
-
     });
-
   }
-
 }

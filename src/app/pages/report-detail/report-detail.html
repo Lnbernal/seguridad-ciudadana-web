@@ -1,0 +1,92 @@
+<div class="p-8 max-w-4xl mx-auto">
+  <p *ngIf="loading">Cargando reporte...</p>
+
+  <p *ngIf="error" class="text-red-600">
+    {{ error }}
+  </p>
+
+  <div *ngIf="report" class="space-y-6">
+    <div>
+      <h1 class="text-3xl font-bold">
+        {{ report.titulo }}
+      </h1>
+
+      <p class="text-gray-600 mt-2">
+        {{ report.descripcion }}
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded">
+      <p>
+        <strong>Categoría:</strong>
+        {{ report.categoria?.nombre_categoria }}
+      </p>
+
+      <p>
+        <strong>Municipio:</strong>
+        {{ report.municipio?.nombre }}
+      </p>
+
+      <p>
+        <strong>Estado:</strong>
+        {{ report.estados_reporte?.nombre_estado }}
+      </p>
+
+      <p>
+        <strong>Prioridad:</strong>
+        {{ report.prioridad }}
+      </p>
+
+      <p>
+        <strong>Fecha:</strong>
+        {{ report.fecha_reporte | date:'medium' }}
+      </p>
+
+      <p>
+        <strong>Dirección:</strong>
+        {{ report.direccion || 'No especificada' }}
+      </p>
+    </div>
+
+    <!-- Evidencias -->
+    <div *ngIf="report.evidencias?.length">
+      <h2 class="text-2xl font-semibold mb-4">
+        Evidencias
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div
+          *ngFor="let evidencia of report.evidencias"
+          class="border rounded p-2"
+        >
+          <img
+            *ngIf="isImage(evidencia.tipo_archivo)"
+            [src]="getFileUrl(evidencia.archivo_url)"
+            class="w-full rounded"
+          />
+
+          <video
+            *ngIf="isVideo(evidencia.tipo_archivo)"
+            [src]="getFileUrl(evidencia.archivo_url)"
+            controls
+            class="w-full rounded"
+          ></video>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comentarios -->
+    <div *ngIf="report.comentarios?.length">
+      <h2 class="text-2xl font-semibold mb-4">
+        Comentarios
+      </h2>
+
+      <div
+        *ngFor="let comentario of report.comentarios"
+        class="border-b py-3"
+      >
+        <p>{{ comentario.comentario }}</p>
+      </div>
+    </div>
+  </div>
+</div>

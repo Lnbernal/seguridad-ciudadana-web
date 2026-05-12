@@ -1,26 +1,24 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+// src/app/pages/dashboard/dashboard.ts
 
-import { AuthService } from '../../services/auth';
+import { Component } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css'
+  imports: [RouterModule],
+  templateUrl: './dashboard.html'
 })
 export class Dashboard {
-
   constructor(
-    private authService: AuthService,
+    private auth: Auth,
     private router: Router
   ) {}
 
-  logout() {
-    this.authService.logout();
+  logout(): void {
+    this.auth.logout();
     this.router.navigate(['/login']);
   }
-
 }

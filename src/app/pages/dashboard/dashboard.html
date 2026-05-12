@@ -1,67 +1,58 @@
-<div class="min-h-screen bg-gray-100">
+<!-- src/app/pages/dashboard/dashboard.html -->
 
-  <!-- Navbar -->
-  <nav class="bg-blue-700 text-white shadow-lg">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold">
-        Seguridad Ciudadana
+<div class="min-h-screen bg-gray-100 p-8">
+  <div class="max-w-6xl mx-auto">
+    <!-- ENCABEZADO -->
+    <div class="bg-white rounded-xl shadow p-6 mb-8">
+      <h1 class="text-3xl font-bold text-gray-800">
+        Panel de Control
       </h1>
-
-      <button
-        (click)="logout()"
-        class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg"
-      >
-        Cerrar sesión
-      </button>
-    </div>
-  </nav>
-
-  <!-- Contenido -->
-  <div class="max-w-7xl mx-auto p-6">
-
-    <h2 class="text-3xl font-bold mb-6">
-      Panel Principal
-    </h2>
-
-    <!-- Tarjetas -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-
-      <div class="bg-white rounded-xl shadow p-6">
-        <h3 class="text-gray-500">Total Reportes</h3>
-        <p class="text-4xl font-bold text-blue-600 mt-2">0</p>
-      </div>
-
-      <div class="bg-white rounded-xl shadow p-6">
-        <h3 class="text-gray-500">En Proceso</h3>
-        <p class="text-4xl font-bold text-yellow-500 mt-2">0</p>
-      </div>
-
-      <div class="bg-white rounded-xl shadow p-6">
-        <h3 class="text-gray-500">Resueltos</h3>
-        <p class="text-4xl font-bold text-green-600 mt-2">0</p>
-      </div>
-
+      <p class="text-gray-600 mt-2">
+        Bienvenido al sistema de Seguridad Ciudadana
+      </p>
     </div>
 
-    <!-- Acciones rápidas -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
+    <!-- BOTONES DE ACCIÓN -->
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- NUEVO REPORTE -->
       <a
-        routerLink="/nuevo-reporte"
-        class="bg-blue-600 text-white p-6 rounded-xl shadow hover:bg-blue-700 text-center text-xl font-semibold"
+        routerLink="/reportes/nuevo"
+        class="block bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow p-6 text-center transition"
       >
-        Crear Nuevo Reporte
+        <h2 class="text-xl font-bold mb-2">
+          Nuevo Reporte
+        </h2>
+        <p class="text-sm opacity-90">
+          Registrar un nuevo incidente ciudadano
+        </p>
       </a>
 
+      <!-- VER REPORTES -->
       <a
         routerLink="/reportes"
-        class="bg-green-600 text-white p-6 rounded-xl shadow hover:bg-green-700 text-center text-xl font-semibold"
+        class="block bg-green-600 hover:bg-green-700 text-white rounded-xl shadow p-6 text-center transition"
       >
-        Ver Mis Reportes
+        <h2 class="text-xl font-bold mb-2">
+          Ver Reportes
+        </h2>
+        <p class="text-sm opacity-90">
+          Consultar todos los reportes registrados
+        </p>
       </a>
 
+      <!-- CERRAR SESIÓN -->
+      <button
+        type="button"
+        (click)="logout()"
+        class="bg-red-600 hover:bg-red-700 text-white rounded-xl shadow p-6 text-center transition"
+      >
+        <h2 class="text-xl font-bold mb-2">
+          Cerrar Sesión
+        </h2>
+        <p class="text-sm opacity-90">
+          Salir del sistema
+        </p>
+      </button>
     </div>
-
   </div>
-
 </div>

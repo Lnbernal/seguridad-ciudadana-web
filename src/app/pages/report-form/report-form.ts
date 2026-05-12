@@ -1,54 +1,153 @@
-import { Component } from '@angular/core';
+// src/app/pages/report-form/report-form.ts
+
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Report } from '../../services/report';
+import { Category } from '../../services/category';
+import { Municipality } from '../../services/municipality';
+import { Evidence } from '../../services/evidence';
 
 @Component({
   selector: 'app-report-form',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './report-form.html',
-  styleUrl: './report-form.css'
+  templateUrl: './report-form.html'
 })
-export class ReportForm {
+export class ReportForm implements OnInit {
+  loading = false;
 
-  titulo = '';
-  descripcion = '';
-  id_categoria = '';
-  id_municipio = '';
-  archivo!: File;
+  categorias: any[] = [];
+  municipios: any[] = [];
+
+  selectedFile: File | null = null;
+
+  form = {
+    titulo: '',
+    descripcion: '',
+    fecha_reporte: new Date().toISOString().substring(0, 10),
+    latitud: null as number | null,
+    longitud: null as number | null,
+    direccion: '',
+    prioridad: 'MEDIA',
+    anonimo: false,
+    id_categoria: '',
+    id_municipio: '',
+    id_estado: 1 // Pendiente por defecto
+  };
 
   constructor(
     private reportService: Report,
-    private router: Router
+    private categoryService: Category,
+    private municipalityService: Municipality,
+    private evidenceService: Evidence,
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  onFileSelected(event: any) {
-    this.archivo = event.target.files[0];
+  ngOnInit(): void {
+    this.loadCatalogs();
+    this.getLocation();
   }
 
-  onSubmit() {
-    const formData = new FormData();
-
-    formData.append('titulo', this.titulo);
-    formData.append('descripcion', this.descripcion);
-    formData.append('id_categoria', this.id_categoria);
-    formData.append('id_municipio', this.id_municipio);
-
-    if (this.archivo) {
-      formData.append('evidencia', this.archivo);
-    }
-
-    this.reportService.create(formData).subscribe({
-      next: () => {
-        alert('Reporte creado correctamente');
-        this.router.navigate(['/reportes']);
+  loadCatalogs(): void {
+    this.categoryService.getAll().subscribe({
+      next: (data: any[]) => {
+        this.categorias = data;
+        this.cdr.detectChanges();
       },
-      error: (error) => {
-        console.error(error);
-        alert('Error al crear el reporte');
+      error: (err) => {
+        console.error('Error cargando categorías', err);
+      }
+    });
+
+    this.municipalityService.getAll().subscribe({
+      next: (data: any[]) => {
+        this.municipios = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error cargando municipios', err);
+      }
+    });
+  }
+
+  getLocation(): void {
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.form.latitud = position.coords.latitude;
+        this.form.longitud = position.coords.longitude;
+        this.cdr.detectChanges();
+      },
+      () => {
+        // Si el usuario niega permisos, no pasa nada.
+        this.form.latitud = null;
+        this.form.longitud = null;
+      }
+    );
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      this.selectedFile = file;
+    }
+  }
+
+  submit(): void {
+    this.loading = true;
+
+    const payload = {
+      ...this.form,
+      id_categoria: Number(this.form.id_categoria),
+      id_municipio: Number(this.form.id_municipio),
+      id_estado: 1
+    };
+
+    this.reportService.create(payload).subscribe({
+      next: (response: any) => {
+        const reportId = response.report?.id_reporte;
+
+        // Si no hay archivo, finalizar
+        if (!this.selectedFile || !reportId) {
+          alert('Reporte creado correctamente');
+          this.router.navigate(['/reportes']);
+          return;
+        }
+
+        // Subir evidencia
+        const formData = new FormData();
+        formData.append('file', this.selectedFile);
+        formData.append('id_reporte', reportId);
+
+        this.evidenceService.upload(formData).subscribe({
+          next: () => {
+            alert('Reporte y evidencia guardados correctamente');
+            this.router.navigate(['/reportes']);
+          },
+          error: (err) => {
+            console.error('Error subiendo evidencia', err);
+            alert('Reporte creado, pero la evidencia no pudo subirse');
+            this.router.navigate(['/reportes']);
+          }
+        });
+      },
+
+      error: (err) => {
+        console.error('Error creando reporte', err);
+        alert('Error creando reporte');
+        this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

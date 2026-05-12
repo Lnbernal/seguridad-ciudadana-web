@@ -1,58 +1,176 @@
-<div class="min-h-screen bg-gray-100 p-8">
-  <div class="max-w-6xl mx-auto">
+<!-- src/app/pages/report-list/report-list.html -->
 
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">
-      Reportes Ciudadanos
-    </h1>
-
-    <!-- Cargando -->
-    <div *ngIf="cargando" class="text-center text-gray-500">
-      Cargando reportes...
+<div class="p-8 max-w-6xl mx-auto">
+  <!-- ENCABEZADO -->
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800">
+        Reportes Ciudadanos
+      </h1>
+      <p class="text-gray-500 mt-1">
+        Consulta y administra los reportes registrados en el sistema.
+      </p>
     </div>
 
-    <!-- Sin reportes -->
-    <div
-      *ngIf="!cargando && reportes.length === 0"
-      class="bg-white p-6 rounded-lg shadow text-center text-gray-500"
+    <a
+      routerLink="/reportes/nuevo"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium shadow"
     >
-      No hay reportes registrados.
-    </div>
+      + Nuevo Reporte
+    </a>
+  </div>
 
-    <!-- Lista -->
+  <!-- LOADING -->
+  <div
+    *ngIf="loading"
+    class="bg-white rounded-lg shadow p-6 text-center text-gray-500"
+  >
+    Cargando reportes...
+  </div>
+
+  <!-- ERROR -->
+  <div
+    *ngIf="error"
+    class="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-6"
+  >
+    {{ error }}
+  </div>
+
+  <!-- SIN DATOS -->
+  <div
+    *ngIf="!loading && reports.length === 0"
+    class="bg-white rounded-lg shadow p-8 text-center text-gray-500"
+  >
+    No hay reportes registrados.
+  </div>
+
+  <!-- LISTA DE REPORTES -->
+  <div class="grid gap-6">
     <div
-      *ngIf="!cargando && reportes.length > 0"
-      class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+      *ngFor="let report of reports"
+      class="bg-white rounded-xl shadow-md border-l-4 border-blue-600 p-6"
     >
-      <div
-        *ngFor="let reporte of reportes"
-        class="bg-white rounded-xl shadow-md p-6"
-      >
-        <h2 class="text-xl font-bold text-gray-800 mb-2">
-          {{ reporte.titulo }}
+      <!-- TÍTULO -->
+      <div class="flex justify-between items-start mb-3">
+        <h2 class="text-2xl font-bold text-gray-800">
+          {{ report.titulo }}
         </h2>
 
-        <p class="text-gray-600 mb-3">
-          {{ reporte.descripcion }}
+        <span
+          class="px-3 py-1 rounded-full text-sm font-semibold"
+          [ngClass]="{
+            'bg-green-100 text-green-700': report.prioridad === 'BAJA',
+            'bg-yellow-100 text-yellow-700': report.prioridad === 'MEDIA',
+            'bg-red-100 text-red-700': report.prioridad === 'ALTA'
+          }"
+        >
+          {{ report.prioridad }}
+        </span>
+      </div>
+
+      <!-- DESCRIPCIÓN -->
+      <p class="text-gray-700 mb-4">
+        {{ report.descripcion }}
+      </p>
+
+      <!-- DATOS -->
+      <div class="grid md:grid-cols-2 gap-3 text-sm text-gray-700">
+        <p>
+          <strong>Categoría:</strong>
+          {{ report.categoria?.nombre_categoria || 'No definida' }}
         </p>
 
-        <div class="text-sm text-gray-500 space-y-1">
-          <p>
-            <strong>Categoría:</strong>
-            {{ reporte.categoria?.nombre }}
-          </p>
+        <p>
+          <strong>Municipio:</strong>
+          {{ report.municipio?.nombre || 'No definido' }}
+        </p>
 
-          <p>
-            <strong>Municipio:</strong>
-            {{ reporte.municipio?.nombre }}
-          </p>
+        <p>
+          <strong>Estado:</strong>
+          {{ report.estados_reporte?.nombre_estado || 'No definido' }}
+        </p>
 
-          <p>
-            <strong>Estado:</strong>
-            {{ reporte.estado?.nombre }}
-          </p>
+        <p>
+          <strong>Dirección:</strong>
+          {{ report.direccion || 'No especificada' }}
+        </p>
+
+        <p>
+          <strong>Fecha:</strong>
+          {{ report.fecha_reporte | date:'medium' }}
+        </p>
+
+        <p>
+          <strong>Anónimo:</strong>
+          {{ report.anonimo ? 'Sí' : 'No' }}
+        </p>
+
+        <p>
+          <strong>Latitud:</strong>
+          {{ report.latitud || 'N/A' }}
+        </p>
+
+        <p>
+          <strong>Longitud:</strong>
+          {{ report.longitud || 'N/A' }}
+        </p>
+      </div>
+
+      <!-- USUARIO -->
+      <div class="mt-4 pt-4 border-t text-sm text-gray-600">
+        <strong>Reportado por:</strong>
+        <span *ngIf="report.anonimo">Anónimo</span>
+        <span *ngIf="!report.anonimo">
+          {{ report.usuario?.nombre }}
+          {{ report.usuario?.apellido }}
+        </span>
+      </div>
+
+      <!-- EVIDENCIAS -->
+      <div
+          *ngIf="report.evidencias && report.evidencias.length > 0"
+          class="mt-4"
+        >
+        <h3 class="font-semibold text-gray-700 mb-2">
+          Evidencias
+        </h3>
+
+        <div class="flex flex-wrap gap-2">
+          <a
+            *ngFor="let evidencia of report.evidencias"
+            [href]="'http://localhost:8080/uploads/' + evidencia.archivo_url"
+            target="_blank"
+            class="text-blue-600 hover:underline text-sm"
+          >
+            Ver archivo
+          </a>
         </div>
       </div>
-    </div>
 
+      <!-- ACCIONES -->
+      <div class="mt-6 pt-4 border-t flex gap-3">
+        <a
+          [routerLink]="['/reportes', report.id_reporte]"
+          class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded"
+        >
+          Ver Detalle
+        </a>
+
+        <a
+          [routerLink]="['/reportes/editar', report.id_reporte]"
+          class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+        >
+          Editar
+        </a>
+
+        <button
+          type="button"
+          (click)="deleteReport(report.id_reporte)"
+          class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
   </div>
 </div>
