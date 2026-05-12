@@ -1,1 +1,58 @@
-<p>report-list works!</p>
+<div class="min-h-screen bg-gray-100 p-8">
+  <div class="max-w-6xl mx-auto">
+
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">
+      Reportes Ciudadanos
+    </h1>
+
+    <!-- Cargando -->
+    <div *ngIf="cargando" class="text-center text-gray-500">
+      Cargando reportes...
+    </div>
+
+    <!-- Sin reportes -->
+    <div
+      *ngIf="!cargando && reportes.length === 0"
+      class="bg-white p-6 rounded-lg shadow text-center text-gray-500"
+    >
+      No hay reportes registrados.
+    </div>
+
+    <!-- Lista -->
+    <div
+      *ngIf="!cargando && reportes.length > 0"
+      class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+    >
+      <div
+        *ngFor="let reporte of reportes"
+        class="bg-white rounded-xl shadow-md p-6"
+      >
+        <h2 class="text-xl font-bold text-gray-800 mb-2">
+          {{ reporte.titulo }}
+        </h2>
+
+        <p class="text-gray-600 mb-3">
+          {{ reporte.descripcion }}
+        </p>
+
+        <div class="text-sm text-gray-500 space-y-1">
+          <p>
+            <strong>Categoría:</strong>
+            {{ reporte.categoria?.nombre }}
+          </p>
+
+          <p>
+            <strong>Municipio:</strong>
+            {{ reporte.municipio?.nombre }}
+          </p>
+
+          <p>
+            <strong>Estado:</strong>
+            {{ reporte.estado?.nombre }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,1 +1,90 @@
-<p>report-form works!</p>
+<div class="min-h-screen bg-gray-100 p-8">
+  <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">
+      Crear Reporte
+    </h1>
+
+    <form (ngSubmit)="onSubmit()" class="space-y-4">
+
+      <!-- Título -->
+      <div>
+        <label class="block mb-1 font-semibold">Título</label>
+        <input
+          type="text"
+          [(ngModel)]="titulo"
+          name="titulo"
+          required
+          class="w-full border rounded px-4 py-2"
+        />
+      </div>
+
+      <!-- Descripción -->
+      <div>
+        <label class="block mb-1 font-semibold">Descripción</label>
+        <textarea
+          [(ngModel)]="descripcion"
+          name="descripcion"
+          rows="4"
+          required
+          class="w-full border rounded px-4 py-2"
+        ></textarea>
+      </div>
+
+      <!-- Categoría -->
+      <div>
+        <label class="block mb-1 font-semibold">Categoría</label>
+        <select
+          [(ngModel)]="id_categoria"
+          name="id_categoria"
+          required
+          class="w-full border rounded px-4 py-2"
+        >
+          <option value="">Seleccione una categoría</option>
+          <option value="1">Robo</option>
+          <option value="2">Vandalismo</option>
+          <option value="3">Violencia</option>
+          <option value="4">Accidente</option>
+          <option value="5">Otro</option>
+        </select>
+      </div>
+
+      <!-- Municipio -->
+      <div>
+        <label class="block mb-1 font-semibold">Municipio</label>
+        <select
+          [(ngModel)]="id_municipio"
+          name="id_municipio"
+          required
+          class="w-full border rounded px-4 py-2"
+        >
+          <option value="">Seleccione un municipio</option>
+          <option value="1">Armenia</option>
+          <option value="2">Calarcá</option>
+          <option value="3">La Tebaida</option>
+          <option value="4">Montenegro</option>
+          <option value="5">Quimbaya</option>
+        </select>
+      </div>
+
+      <!-- Evidencia -->
+      <div>
+        <label class="block mb-1 font-semibold">Evidencia (imagen)</label>
+        <input
+          type="file"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          class="w-full"
+        />
+      </div>
+
+      <!-- Botón -->
+      <button
+        type="submit"
+        class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+      >
+        Enviar Reporte
+      </button>
+
+    </form>
+  </div>
+</div>
