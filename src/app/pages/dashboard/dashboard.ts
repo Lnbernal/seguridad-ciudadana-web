@@ -9,7 +9,8 @@ import { Auth } from '../../services/auth';
   selector: 'app-dashboard',
   standalone: true,
   imports: [RouterModule],
-  templateUrl: './dashboard.html'
+  templateUrl: './dashboard.html',
+  styleUrls: ['./dashboard.css'],
 })
 export class Dashboard {
   constructor(

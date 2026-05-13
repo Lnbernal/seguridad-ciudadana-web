@@ -1,0 +1,136 @@
+
+
+/* Elimina el fondo gris de Tailwind */
+.min-h-screen.bg-gray-100 {
+  background: transparent !important;
+}
+
+/* Tarjeta del encabezado (bg-white) */
+.bg-white.rounded-xl.shadow {
+  background: rgba(20, 20, 40, 0.75) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  color: #eee !important;
+}
+
+/* Título principal */
+h1.text-3xl.font-bold.text-gray-800 {
+  background: linear-gradient(135deg, #a0e9ff, #6b8cff) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-size: 2rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Texto secundario del encabezado */
+p.text-gray-600 {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Contenedor de los botones de acción (grid) */
+.grid {
+  gap: 1.5rem;
+}
+
+/* Estilos base para las tarjetas de acción (enlaces y botón) */
+a.block.rounded-xl.shadow,
+button.rounded-xl.shadow {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  color: #fff !important;
+  text-decoration: none !important;
+}
+
+a.block.rounded-xl.shadow:hover,
+button.rounded-xl.shadow:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Colores individuales para cada tarjeta (gradientes) */
+a.bg-blue-600 {
+  background: linear-gradient(135deg, #4f6ef6, #6b8cff) !important;
+}
+
+a.bg-green-600 {
+  background: linear-gradient(135deg, #2ed573, #1abc9c) !important;
+}
+
+button.bg-red-600 {
+  background: linear-gradient(135deg, #ff4757, #ff6b81) !important;
+}
+
+/* Títulos dentro de las tarjetas */
+a h2,
+button h2 {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+
+/* Descripciones dentro de las tarjetas */
+a p,
+button p {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-weight: 400;
+}
+
+/* Ajuste de padding para que las tarjetas no pierdan forma */
+a.block.p-6,
+button.p-6 {
+  padding: 1.8rem !important;
+}
+
+/* Efecto hover individual para cada gradiente (más claro) */
+a.bg-blue-600:hover {
+  background: linear-gradient(135deg, #5d7eff, #7b8fff) !important;
+}
+
+a.bg-green-600:hover {
+  background: linear-gradient(135deg, #3ae374, #28e0b5) !important;
+}
+
+button.bg-red-600:hover {
+  background: linear-gradient(135deg, #ff5e6b, #ff7f8a) !important;
+}
+
+/* Quitar el outline azul por defecto de Tailwind en el botón */
+button:focus {
+  outline: none !important;
+}
+
+/* ===== CORRECCIÓN DEL GRID (para que no se apilen) ===== */
+
+/* Aseguramos que el contenedor con clase .grid sea un grid */
+.grid {
+  display: grid !important;
+  gap: 1.5rem; /* mantiene el espacio entre tarjetas */
+}
+
+/* En pantallas medianas (md) hacia arriba: 3 columnas */
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* En pantallas pequeñas: 1 columna (opcional, por si Tailwind no lo aplica) */
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Aseguramos que las tarjetas (a y button) se comporten como elementos de grid */
+a.block.rounded-xl.shadow,
+button.rounded-xl.shadow {
+  display: block; /* ya tenían block de Tailwind, lo dejamos */
+  width: 100%;    /* ocupan toda la celda del grid */
+}

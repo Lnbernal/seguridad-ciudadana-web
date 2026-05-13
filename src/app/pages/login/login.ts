@@ -7,7 +7,8 @@ import { Auth } from '../../services/auth';
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule, RouterLink],
-  templateUrl: './login.html'
+  templateUrl: './login.html',
+  styleUrls: ['./login.css'],
 })
 export class Login {
   form = {

@@ -53,7 +53,8 @@ interface ReportModel {
     CommonModule,
     RouterModule
   ],
-  templateUrl: './report-list.html'
+  templateUrl: './report-list.html',
+  styleUrls: ['./report-list.css']  
 })
 export class ReportList implements OnInit {
   reports: ReportModel[] = [];

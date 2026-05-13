@@ -19,7 +19,8 @@ import { Evidence } from '../../services/evidence';
   selector: 'app-report-form',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './report-form.html'
+  templateUrl: './report-form.html',
+  styleUrls: ['./report-form.css']
 })
 export class ReportForm implements OnInit {
   loading = false;

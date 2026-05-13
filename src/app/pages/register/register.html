@@ -1,1 +1,58 @@
-<p>register works!</p>
+<div class="form-registro" style="max-width: 500px; margin: 40px auto;">
+  <!-- el resto igual -->
+
+  <h1>Registro</h1>
+
+  <input
+    type="text"
+    placeholder="Nombre"
+    [(ngModel)]="nombre"
+  />
+
+  <br><br>
+
+  <input
+    type="text"
+    placeholder="Apellido"
+    [(ngModel)]="apellido"
+  />
+
+  <br><br>
+
+  <input
+    type="email"
+    placeholder="Correo"
+    [(ngModel)]="correo"
+  />
+
+  <br><br>
+
+  <input
+    type="password"
+    placeholder="Contraseña"
+    [(ngModel)]="contrasena"
+  />
+
+  <br><br>
+
+  <input
+    type="text"
+    placeholder="Telefono"
+    [(ngModel)]="telefono"
+  />
+
+  <br><br>
+
+  <button (click)="registrar()">
+    Registrarse
+  </button>
+
+  <p style="color: green;" *ngIf="mensaje">
+    {{ mensaje }}
+  </p>
+
+  <p style="color: red;" *ngIf="error">
+    {{ error }}
+  </p>
+
+</div>

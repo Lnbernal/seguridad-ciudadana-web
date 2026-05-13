@@ -13,7 +13,8 @@ import { Report } from '../../services/report';
   selector: 'app-report-detail',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './report-detail.html'
+  templateUrl: './report-detail.html',
+  styleUrls: ['./report-detail.css']
 })
 export class ReportDetail implements OnInit {
   report: any = null;
