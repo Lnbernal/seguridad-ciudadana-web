@@ -1,58 +1,117 @@
-<div class="form-registro" style="max-width: 500px; margin: 40px auto;">
-  <!-- el resto igual -->
+<div class="register-page">
+  <!-- Overlay -->
+  <div class="overlay"></div>
 
-  <h1>Registro</h1>
+  <div class="register-container fade-in">
+    <!-- PANEL IZQUIERDO -->
+    <section class="hero-panel">
+      <div class="brand">
+        Seguridad Ciudadana
+      </div>
 
-  <input
-    type="text"
-    placeholder="Nombre"
-    [(ngModel)]="nombre"
-  />
+      <p class="hero-top-text">
+        Construyendo comunidades más seguras
+      </p>
 
-  <br><br>
+      <h1>
+        REPORTA Y
+        <span>PROTEGE</span>
+      </h1>
 
-  <input
-    type="text"
-    placeholder="Apellido"
-    [(ngModel)]="apellido"
-  />
+      <p class="hero-description">
+        Registra incidentes, adjunta evidencias y ayuda a mejorar
+        la seguridad de tu municipio en tiempo real.
+      </p>
 
-  <br><br>
+      <ul class="hero-list">
+        <li>Reportes rápidos y sencillos</li>
+        <li>Seguimiento del estado de cada caso</li>
+        <li>Carga de fotos y evidencias</li>
+        <li>Participación ciudadana activa</li>
+      </ul>
+    </section>
 
-  <input
-    type="email"
-    placeholder="Correo"
-    [(ngModel)]="correo"
-  />
+    <!-- PANEL DERECHO -->
+    <section class="form-panel">
+      <p class="form-label">
+        Completa el formulario y
+      </p>
 
-  <br><br>
+      <h2>CREA TU CUENTA</h2>
 
-  <input
-    type="password"
-    placeholder="Contraseña"
-    [(ngModel)]="contrasena"
-  />
+      <form
+        (ngSubmit)="registrar()"
+        class="register-form"
+      >
+        <input
+          type="text"
+          name="nombre"
+          placeholder="Nombre"
+          [(ngModel)]="form.nombre"
+          required
+        />
 
-  <br><br>
+        <input
+          type="text"
+          name="apellido"
+          placeholder="Apellido"
+          [(ngModel)]="form.apellido"
+          required
+        />
 
-  <input
-    type="text"
-    placeholder="Telefono"
-    [(ngModel)]="telefono"
-  />
+        <input
+          type="email"
+          name="correo"
+          placeholder="Correo electrónico"
+          [(ngModel)]="form.correo"
+          required
+        />
 
-  <br><br>
+        <input
+          type="password"
+          name="password"
+          placeholder="Contraseña"
+          [(ngModel)]="form.password"
+          required
+        />
 
-  <button (click)="registrar()">
-    Registrarse
-  </button>
+        <input
+          type="text"
+          name="telefono"
+          placeholder="Teléfono"
+          [(ngModel)]="form.telefono"
+        />
 
-  <p style="color: green;" *ngIf="mensaje">
-    {{ mensaje }}
-  </p>
+        <button
+          type="submit"
+          [disabled]="loading"
+        >
+          {{ loading ? 'CREANDO CUENTA...' : 'REGISTRARME' }}
+        </button>
+      </form>
 
-  <p style="color: red;" *ngIf="error">
-    {{ error }}
-  </p>
+      <!-- Mensaje éxito -->
+      <div
+        *ngIf="mensaje"
+        class="success-box"
+      >
+        {{ mensaje }}
+      </div>
 
+      <!-- Mensaje error -->
+      <div
+        *ngIf="error"
+        class="error-box"
+      >
+        {{ error }}
+      </div>
+
+      <p class="login-link">
+        ¿Ya tienes cuenta?
+        <a routerLink="/login">
+          Inicia sesión
+        </a>
+      </p>
+    </section>
+  </div>
 </div>

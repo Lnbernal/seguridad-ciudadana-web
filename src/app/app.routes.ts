@@ -12,7 +12,11 @@ import { authGuard } from './guards/auth';
 export const routes: Routes = [
   { path: '', component: Home },
   { path: 'login', component: Login },
-  { path: 'register', component: Register },
+  {
+  path: 'register',
+  loadComponent: () =>
+    import('./pages/register/register').then(m => m.Register)
+},
 
   {
     path: 'dashboard',

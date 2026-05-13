@@ -64,7 +64,7 @@ export class ReportForm implements OnInit {
         this.categorias = data;
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error cargando categorías', err);
       }
     });
@@ -74,7 +74,7 @@ export class ReportForm implements OnInit {
         this.municipios = data;
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error cargando municipios', err);
       }
     });
@@ -90,7 +90,7 @@ export class ReportForm implements OnInit {
         this.cdr.detectChanges();
       },
       () => {
-        // Si el usuario niega permisos, no pasa nada.
+        // Si el usuario niega permisos, se dejan vacíos
         this.form.latitud = null;
         this.form.longitud = null;
       }
@@ -117,9 +117,12 @@ export class ReportForm implements OnInit {
 
     this.reportService.create(payload).subscribe({
       next: (response: any) => {
-        const reportId = response.report?.id_reporte;
+        // Ajusta según la respuesta real del backend
+        const reportId =
+          response?.report?.id_reporte ||
+          response?.id_reporte;
 
-        // Si no hay archivo, finalizar
+        // Si no hay archivo, terminar
         if (!this.selectedFile || !reportId) {
           alert('Reporte creado correctamente');
           this.router.navigate(['/reportes']);
@@ -127,24 +130,22 @@ export class ReportForm implements OnInit {
         }
 
         // Subir evidencia
-        const formData = new FormData();
-        formData.append('file', this.selectedFile);
-        formData.append('id_reporte', reportId);
-
-        this.evidenceService.upload(formData).subscribe({
-          next: () => {
-            alert('Reporte y evidencia guardados correctamente');
-            this.router.navigate(['/reportes']);
-          },
-          error: (err) => {
-            console.error('Error subiendo evidencia', err);
-            alert('Reporte creado, pero la evidencia no pudo subirse');
-            this.router.navigate(['/reportes']);
-          }
-        });
+        this.evidenceService
+          .upload(this.selectedFile, reportId)
+          .subscribe({
+            next: () => {
+              alert('Reporte y evidencia guardados correctamente');
+              this.router.navigate(['/reportes']);
+            },
+            error: (err: any) => {
+              console.error('Error subiendo evidencia', err);
+              alert('Reporte creado, pero la evidencia no pudo subirse');
+              this.router.navigate(['/reportes']);
+            }
+          });
       },
 
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error creando reporte', err);
         alert('Error creando reporte');
         this.loading = false;

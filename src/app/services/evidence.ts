@@ -1,10 +1,7 @@
 // src/app/services/evidence.ts
 
 import { Injectable } from '@angular/core';
-import {
-  HttpClient,
-  HttpHeaders
-} from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -15,21 +12,25 @@ export class Evidence {
 
   constructor(private http: HttpClient) {}
 
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token') || '';
+  upload(file: File, idReporte: number): Observable<any> {
+    const token = localStorage.getItem('token');
 
-    return new HttpHeaders({
+    const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`
     });
-  }
 
-  upload(formData: FormData): Observable<any> {
+    // IMPORTANTE:
+    // El nombre del campo debe llamarse exactamente "archivo"
+    // porque en el backend usas:
+    // upload.single('archivo')
+    const formData = new FormData();
+    formData.append('archivo', file);
+    formData.append('id_reporte', idReporte.toString());
+
     return this.http.post(
-      this.apiUrl,
+      `${this.apiUrl}/upload`,
       formData,
-      {
-        headers: this.getHeaders()
-      }
+      { headers }
     );
   }
 }

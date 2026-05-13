@@ -1,9 +1,78 @@
-/* You can add global styles to this file, and also import other style files */
+/* src/styles.css o src/main.css */
+
+html,
 body {
   margin: 0;
-  min-height: 100vh;
-  background: radial-gradient(circle at top, #1a1a2e 0%, #0f0f1c 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 0;
+  min-height: 100%;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  background: #0f172a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ==========================
+   ANIMACIONES GLOBALES
+========================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes floatEffect {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(79, 110, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(79, 110, 246, 0.6);
+  }
+}
+
+@keyframes movingBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
 }

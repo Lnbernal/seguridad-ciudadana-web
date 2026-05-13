@@ -1,27 +1,49 @@
-<div class="min-h-screen bg-gray-100 flex items-center justify-center">
-  <div class="bg-white shadow-lg rounded-xl p-10 text-center">
-    <h1 class="text-4xl font-bold text-blue-600 mb-4">
-      Seguridad Ciudadana
+<!-- src/app/pages/home/home.html -->
+
+<section class="hero">
+  <div class="overlay"></div>
+
+  <div class="hero-content">
+    <span class="badge">Plataforma Oficial</span>
+
+    <h1>
+      Seguridad
+      <span>Ciudadana</span>
     </h1>
 
-    <p class="text-gray-600 mb-6">
-      Plataforma para reportar incidentes y mejorar la seguridad del municipio.
+    <p class="subtitle">
+      Reporta incidentes, adjunta evidencias y realiza seguimiento en tiempo real.
+      Una herramienta para fortalecer la comunicación entre la ciudadanía y las autoridades.
     </p>
 
-    <div class="space-x-4">
-      <a
-        routerLink="/login"
-        class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-      >
+    <div class="actions">
+      <a routerLink="/login" class="btn btn-primary">
         Iniciar Sesión
       </a>
 
-      <a
-        routerLink="/register"
-        class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
-      >
+      <a routerLink="/register" class="btn btn-secondary">
         Registrarse
       </a>
     </div>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="icon">📍</div>
+        <h3>Geolocalización</h3>
+        <p>Ubica el incidente con coordenadas y dirección.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon">📎</div>
+        <h3>Evidencias</h3>
+        <p>Adjunta fotos y documentos como soporte.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon">📊</div>
+        <h3>Seguimiento</h3>
+        <p>Consulta el estado de cada reporte.</p>
+      </div>
+    </div>
   </div>
-</div>
+</section>

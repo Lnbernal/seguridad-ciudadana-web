@@ -1,14 +1,22 @@
+// src/app/pages/login/login.ts
+
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common'; // <-- IMPORTANTE
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+
 import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [
+    CommonModule, // <-- Agregar esto para que funcione *ngIf
+    FormsModule,
+    RouterLink
+  ],
   templateUrl: './login.html',
-  styleUrls: ['./login.css'],
+  styleUrls: ['./login.css']
 })
 export class Login {
   form = {
@@ -31,23 +39,16 @@ export class Login {
       contraseña: this.form.password
     };
 
-    console.log('Payload enviado:', payload);
-
     this.auth.login(payload).subscribe({
       next: (response: any) => {
-        console.log('Respuesta del servidor:', response);
-
         this.auth.saveSession(response);
-
         this.router.navigate(['/dashboard']);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error en login:', err);
-
         this.error =
-          err?.error?.message || 'Credenciales incorrectas';
-
-        alert(this.error);
+          err?.error?.message ||
+          'Credenciales incorrectas';
       }
     });
   }

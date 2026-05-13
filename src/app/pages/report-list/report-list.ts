@@ -6,6 +6,7 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 
+import { Auth } from '../../services/auth';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -57,15 +58,26 @@ interface ReportModel {
   styleUrls: ['./report-list.css']  
 })
 export class ReportList implements OnInit {
+  
   reports: ReportModel[] = [];
   loading = true;
   error = '';
 
   constructor(
-    private reportService: Report,
-    private cdr: ChangeDetectorRef
-  ) {}
+  private reportService: Report,
+  private auth: Auth,
+  private cdr: ChangeDetectorRef
+) {}
 
+canEdit(): boolean {
+  const user = this.auth.getUser();
+  return user?.rol === 'ADMIN' || user?.rol === 'FUNCIONARIO';
+}
+
+canDelete(): boolean {
+  const user = this.auth.getUser();
+  return user?.rol === 'ADMIN';
+}
   ngOnInit(): void {
     this.loadReports();
   }

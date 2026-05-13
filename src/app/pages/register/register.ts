@@ -1,57 +1,65 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './register.html',
-  styleUrl: './register.css',
+  styleUrls: ['./register.css']
 })
 export class Register {
+  form = {
+    nombre: '',
+    apellido: '',
+    correo: '',
+    password: '',
+    telefono: ''
+  };
 
-  nombre = '';
-  apellido = '';
-  correo = '';
-  contrasena = '';
-  telefono = '';
-
+  loading = false;
   mensaje = '';
   error = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private auth: Auth,
+    private router: Router
+  ) {}
 
-  registrar() {
+  registrar(): void {
+    this.loading = true;
+    this.error = '';
+    this.mensaje = '';
 
-    const body = {
-      nombre: this.nombre,
-      apellido: this.apellido,
-      correo: this.correo,
-      contraseña: this.contrasena,
-      telefono: this.telefono
+    const payload = {
+      nombre: this.form.nombre,
+      apellido: this.form.apellido,
+      correo: this.form.correo,
+      contraseña: this.form.password,
+      telefono: this.form.telefono
     };
 
-    this.http.post(
-      'http://localhost:8080/api/auth/register',
-      body
-    ).subscribe({
-      next: (res: any) => {
-        console.log(res);
+    this.auth.register(payload).subscribe({
+      next: () => {
+        this.mensaje = 'Cuenta creada correctamente.';
 
-        this.mensaje = 'Usuario registrado correctamente';
-        this.error = '';
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 1500);
       },
-
-      error: (err) => {
-        console.log(err);
-
-        this.error = 'Error al registrar usuario';
-        this.mensaje = '';
+      error: (err: any) => {
+        this.error =
+          err?.error?.message ||
+          'No fue posible completar el registro.';
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
       }
     });
-
   }
-
 }
