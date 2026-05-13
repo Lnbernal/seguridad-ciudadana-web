@@ -1,5 +1,5 @@
 /* src/styles.css o src/main.css */
-
+@import 'leaflet/dist/leaflet.css';
 html,
 body {
   margin: 0;

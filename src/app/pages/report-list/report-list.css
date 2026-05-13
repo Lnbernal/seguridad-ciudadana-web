@@ -1,205 +1,221 @@
-/* ===== ESTILO VIDRIO PARA LISTA DE REPORTES ===== */
+/* Reutiliza exactamente el mismo estilo del dashboard */
 
-/* Fondo oscuro general */
-:host {
-  display: block;
-  min-height: 100vh;
-  background: radial-gradient(circle at top, #1a1a2e 0%, #0f0f1c 100%);
-}
+@import '../dashboard/dashboard.css';
 
-/* Contenedor principal -> tarjeta vidrio */
-.p-8.max-w-6xl.mx-auto {
-  background: rgba(20, 20, 40, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 24px;
-  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.15);
-  color: #eee;
-  padding: 2.5rem;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-}
-
-/* ========= ENCABEZADO ========= */
-h1.text-3xl.font-bold.text-gray-800 {
-  background: linear-gradient(135deg, #a0e9ff, #6b8cff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-size: 2rem;
-  margin-bottom: 0.3rem;
-}
-
-p.text-gray-500 {
-  color: rgba(255, 255, 255, 0.7) !important;
-}
-
-/* Botón "Nuevo Reporte" */
-a.bg-blue-600 {
-  background: linear-gradient(135deg, #4f6ef6, #7b5cff) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 14px;
-  padding: 0.7rem 1.5rem;
-  font-weight: 600;
-  color: #fff !important;
+/* Botón Nuevo Reporte */
+.new-report-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff;
   text-decoration: none;
+  font-weight: 600;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(79, 110, 246, 0.4);
 }
 
-a.bg-blue-600:hover {
-  background: linear-gradient(135deg, #5d7eff, #8f6fff) !important;
+.new-report-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 25px rgba(107, 140, 255, 0.6);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
 }
 
-/* ========= ESTADOS (loading, error, vacío) ========= */
-.bg-white.rounded-lg.shadow {
-  background: rgba(255, 255, 255, 0.08) !important;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
-  color: rgba(255, 255, 255, 0.9) !important;
-  padding: 2rem;
+/* Grid de reportes */
+.reports-grid {
+  display: grid;
+  gap: 24px;
 }
 
-.bg-red-100 {
-  background: rgba(255, 71, 87, 0.2) !important;
-  border: 1px solid rgba(255, 71, 87, 0.4) !important;
-  color: #ffb3b3 !important;
-  border-radius: 16px;
+/* Tarjeta */
+.report-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 28px;
+  transition: all 0.3s ease;
 }
 
-/* ========= TARJETAS DE REPORTE ========= */
-.bg-white.rounded-xl.shadow-md.border-l-4.border-blue-600 {
-  background: rgba(20, 20, 40, 0.7) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-left: 4px solid #4f6ef6 !important; /* cambiamos a un azul más vibrante */
-  border-radius: 20px !important;
-  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-  color: #ddd;
-  transition: transform 0.2s ease;
+.report-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(59, 130, 246, 0.25);
 }
 
-.bg-white.rounded-xl.shadow-md.border-l-4.border-blue-600:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+/* Header */
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
 }
 
-/* Título del reporte */
-h2.text-2xl.font-bold.text-gray-800 {
-  color: #ffffff !important;
+.report-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #fff;
   font-weight: 700;
 }
 
-/* Badges de prioridad */
-span.rounded-full {
+.report-category {
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+/* Prioridad */
+.priority-badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.priority-low {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.priority-medium {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.priority-high {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+/* Descripción */
+.report-description {
+  color: #cbd5e1;
+  line-height: 1.7;
+  margin-bottom: 22px;
+}
+
+/* Metadata */
+.report-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.meta-item {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.meta-label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 6px;
   font-weight: 600;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Prioridad BAJA */
-.bg-green-100.text-green-700 {
-  background: rgba(46, 213, 115, 0.2) !important;
-  color: #7bed9f !important;
-  border-color: rgba(46, 213, 115, 0.5);
-}
-
-/* Prioridad MEDIA */
-.bg-yellow-100.text-yellow-700 {
-  background: rgba(255, 193, 7, 0.2) !important;
-  color: #ffd54f !important;
-  border-color: rgba(255, 193, 7, 0.5);
-}
-
-/* Prioridad ALTA */
-.bg-red-100.text-red-700 {
-  background: rgba(255, 71, 87, 0.2) !important;
-  color: #ff6b81 !important;
-  border-color: rgba(255, 71, 87, 0.5);
-}
-
-/* Descripción y datos */
-p.text-gray-700,
-p.text-gray-600,
-.text-sm.text-gray-700,
-.text-sm.text-gray-600 {
-  color: rgba(255, 255, 255, 0.8) !important;
-}
-
-strong {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-/* Línea separadora */
-.border-t {
-  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
-}
-
-/* Enlaces de evidencia */
-a.text-blue-600 {
-  color: #a0c4ff !important;
+.meta-item span:last-child {
+  color: #ffffff;
   font-weight: 500;
 }
-a.text-blue-600:hover {
-  color: #fff !important;
-  text-decoration: underline !important;
+
+/* Estado */
+.status-badge {
+  color: #38bdf8;
 }
 
-/* ========= BOTONES DE ACCIÓN ========= */
-/* "Ver Detalle" */
-a.bg-gray-100 {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: #ddd !important;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  padding: 0.5rem 1rem;
-  transition: all 0.3s;
-}
-a.bg-gray-100:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
-  color: #fff !important;
-  transform: translateY(-1px);
+/* Evidencias */
+.evidence-section {
+  margin-bottom: 24px;
 }
 
-/* "Editar" */
-a.bg-yellow-500 {
-  background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+.evidence-section h3 {
+  color: #ffffff;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.evidence-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.evidence-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #93c5fd;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.evidence-link:hover {
+  color: #ffffff;
+}
+
+/* Acciones */
+.report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.action-btn {
   border: none;
-  border-radius: 12px;
-  color: #fff !important;
-  padding: 0.5rem 1rem;
-  box-shadow: 0 4px 10px rgba(243, 156, 18, 0.4);
-}
-a.bg-yellow-500:hover {
-  background: linear-gradient(135deg, #f1a82f, #e58e36) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(243, 156, 18, 0.6);
-}
-
-/* "Eliminar" */
-button.bg-red-600 {
-  background: linear-gradient(135deg, #ff4757, #ff6b81) !important;
-  border: none;
-  border-radius: 12px;
-  color: #fff !important;
-  font-weight: 600;
-  padding: 0.5rem 1rem;
-  box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4);
-  transition: all 0.3s;
+  outline: none;
   cursor: pointer;
-}
-button.bg-red-600:hover {
-  background: linear-gradient(135deg, #ff5e6b, #ff7f8a) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(255, 71, 87, 0.6);
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
 }
 
-/* Ajuste de espaciado en la cuadrícula de reportes */
-.grid.gap-6 {
-  gap: 1.8rem;
+.action-btn.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.action-btn.warning {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: #ffffff;
+}
+
+.action-btn.danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Error */
+.error-panel {
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .report-header {
+    flex-direction: column;
+  }
+
+  .report-actions {
+    flex-direction: column;
+  }
+
+  .action-btn {
+    width: 100%;
+    text-align: center;
+  }
 }

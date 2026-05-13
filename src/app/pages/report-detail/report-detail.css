@@ -1,0 +1,105 @@
+@import '../report-list/report-list.css';
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.detail-header h1 {
+  margin: 0;
+  color: #fff;
+  font-size: 2rem;
+}
+
+.description {
+  color: #cbd5e1;
+  line-height: 1.8;
+  margin-bottom: 30px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.detail-grid strong {
+  color: #fff;
+}
+
+.edit-btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+/* Acciones superiores */
+.page-actions {
+  margin-bottom: 24px;
+}
+
+/* Botón volver */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  transform: translateY(-2px);
+}
+
+/* Evidencias */
+.evidence-section {
+  margin-top: 32px;
+}
+
+.evidence-section h3 {
+  margin-bottom: 12px;
+  color: #ffffff;
+}
+
+.evidence-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.evidence-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.12);
+  color: #93c5fd;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.evidence-link:hover {
+  background: rgba(59, 130, 246, 0.2);
+  color: #ffffff;
+}

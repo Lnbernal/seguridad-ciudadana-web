@@ -51,5 +51,13 @@ export class Login {
           'Credenciales incorrectas';
       }
     });
+        this.auth.login(payload).subscribe({
+      next: (response: any) => {
+        console.log(JSON.stringify(response, null, 3));
+        console.log('Respuesta completa del backend:', response);
+        this.auth.saveSession(response);
+        this.router.navigate(['/dashboard']);
+      }
+    });
   }
 }

@@ -1,186 +1,193 @@
 <!-- src/app/pages/report-form/report-form.html -->
 
-<div class="p-8 max-w-3xl mx-auto">
-  <h1 class="text-3xl font-bold mb-6">
-    Crear Reporte Ciudadano
-  </h1>
-
-  <form
-    (ngSubmit)="submit()"
-    class="space-y-4"
-  >
-    <!-- TÍTULO -->
-    <div>
-      <label class="block font-semibold mb-1">
-        Título
-      </label>
-      <input
-        type="text"
-        name="titulo"
-        [(ngModel)]="form.titulo"
-        required
-        class="w-full border rounded px-3 py-2"
-      />
-    </div>
-
-    <!-- DESCRIPCIÓN -->
-    <div>
-      <label class="block font-semibold mb-1">
-        Descripción
-      </label>
-      <textarea
-        name="descripcion"
-        [(ngModel)]="form.descripcion"
-        required
-        rows="4"
-        class="w-full border rounded px-3 py-2"
-      ></textarea>
-    </div>
-
-    <!-- CATEGORÍA -->
-    <div>
-      <label class="block font-semibold mb-1">
-        Categoría
-      </label>
-      <select
-        name="id_categoria"
-        [(ngModel)]="form.id_categoria"
-        required
-        class="w-full border rounded px-3 py-2"
-      >
-        <option value="">
-          Seleccione una categoría
-        </option>
-
-        <option
-          *ngFor="let categoria of categorias"
-          [value]="categoria.id_categoria"
-        >
-          {{ categoria.nombre_categoria }}
-        </option>
-      </select>
-    </div>
-
-    <!-- MUNICIPIO -->
-    <div>
-      <label class="block font-semibold mb-1">
-        Municipio
-      </label>
-      <select
-        name="id_municipio"
-        [(ngModel)]="form.id_municipio"
-        required
-        class="w-full border rounded px-3 py-2"
-      >
-        <option value="">
-          Seleccione un municipio
-        </option>
-
-        <option
-          *ngFor="let municipio of municipios"
-          [value]="municipio.id_municipio"
-        >
-          {{ municipio.nombre }}
-        </option>
-      </select>
-    </div>
-
-    <!-- DIRECCIÓN -->
-    <div>
-      <label class="block font-semibold mb-1">
-        Dirección
-      </label>
-      <input
-        type="text"
-        name="direccion"
-        [(ngModel)]="form.direccion"
-        class="w-full border rounded px-3 py-2"
-      />
-    </div>
-
-    <!-- PRIORIDAD -->
-    <div>
-      <label class="block font-semibold mb-1">
-        Prioridad
-      </label>
-      <select
-        name="prioridad"
-        [(ngModel)]="form.prioridad"
-        class="w-full border rounded px-3 py-2"
-      >
-        <option value="BAJA">Baja</option>
-        <option value="MEDIA">Media</option>
-        <option value="ALTA">Alta</option>
-      </select>
-    </div>
-
-    <!-- ANÓNIMO -->
-    <div class="flex items-center gap-2">
-      <input
-        type="checkbox"
-        name="anonimo"
-        [(ngModel)]="form.anonimo"
-      />
-      <label>
-        Reportar de forma anónima
-      </label>
-    </div>
-
-    <!-- UBICACIÓN (OPCIONAL) -->
-    <div class="grid grid-cols-2 gap-4">
-      <div>
-        <label class="block font-semibold mb-1">
-          Latitud (opcional)
-        </label>
-        <input
-          type="number"
-          name="latitud"
-          [(ngModel)]="form.latitud"
-          step="any"
-          class="w-full border rounded px-3 py-2"
-        />
+<div class="dashboard-page">
+  <div class="dashboard-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div>
+          <h2>Seguridad Ciudadana</h2>
+          <p>Sistema de Reportes</p>
+        </div>
       </div>
 
-      <div>
-        <label class="block font-semibold mb-1">
-          Longitud (opcional)
-        </label>
-        <input
-          type="number"
-          name="longitud"
-          [(ngModel)]="form.longitud"
-          step="any"
-          class="w-full border rounded px-3 py-2"
-        />
-      </div>
-    </div>
+      <nav class="menu">
+        <a routerLink="/dashboard" class="menu-item">
+          <i class="fas fa-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
 
-    <!-- EVIDENCIA -->
-    <div>
-      <label class="block font-semibold mb-1">
-        Evidencia (imagen o video)
-      </label>
+        <a routerLink="/nuevo-reporte" class="menu-item active">
+          <i class="fas fa-plus-circle"></i>
+          <span>Nuevo Reporte</span>
+        </a>
 
-      <input
-        type="file"
-        name="evidencia"
-        accept="image/*,video/*"
-        (change)="onFileSelected($event)"
-        class="w-full border rounded px-3 py-2"
-      />
+        <a routerLink="/reportes" class="menu-item">
+          <i class="fas fa-folder-open"></i>
+          <span>Mis Reportes</span>
+        </a>
 
-      <p class="text-sm text-gray-500 mt-1">
-        Puedes adjuntar una imagen o video como evidencia del reporte.
-      </p>
-    </div>
+        <button type="button" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Cerrar Sesión</span>
+        </button>
+      </nav>
+    </aside>
 
-    <!-- BOTÓN -->
-    <button
-      type="submit"
-      [disabled]="loading"
-      class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-    >
-      {{ loading ? 'Guardando...' : 'Crear Reporte' }}
-    </button>
-  </form>
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+      <!-- ENCABEZADO -->
+      <header class="topbar fade-in">
+        <div>
+          <h1>Nuevo Reporte</h1>
+          <p>
+            Registra un incidente y selecciona la ubicación exacta en el mapa.
+          </p>
+        </div>
+      </header>
+
+      <!-- FORMULARIO -->
+      <section class="dashboard-panel fade-in">
+        <form (ngSubmit)="submit()" class="report-form">
+          <!-- TÍTULO -->
+          <div class="form-group">
+            <label>Título</label>
+            <input
+              type="text"
+              name="titulo"
+              [(ngModel)]="form.titulo"
+              required
+            />
+          </div>
+
+          <!-- DESCRIPCIÓN -->
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea
+              name="descripcion"
+              rows="4"
+              [(ngModel)]="form.descripcion"
+              required
+            ></textarea>
+          </div>
+
+          <!-- CATEGORÍA Y MUNICIPIO -->
+          <div class="form-grid two-columns">
+            <div class="form-group">
+              <label>Categoría</label>
+              <select
+                name="id_categoria"
+                [(ngModel)]="form.id_categoria"
+                required
+              >
+                <option value="">Seleccione una categoría</option>
+                <option
+                  *ngFor="let categoria of categorias"
+                  [value]="categoria.id_categoria"
+                >
+                  {{ categoria.nombre_categoria }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Municipio</label>
+              <select
+                name="id_municipio"
+                [(ngModel)]="form.id_municipio"
+                required
+              >
+                <option value="">Seleccione un municipio</option>
+                <option
+                  *ngFor="let municipio of municipios"
+                  [value]="municipio.id_municipio"
+                >
+                  {{ municipio.nombre }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- DIRECCIÓN -->
+          <div class="form-group">
+            <label>Dirección</label>
+            <input
+              type="text"
+              name="direccion"
+              [(ngModel)]="form.direccion"
+            />
+          </div>
+
+          <!-- PRIORIDAD Y ANÓNIMO -->
+          <div class="form-grid two-columns">
+            <div class="form-group">
+              <label>Prioridad</label>
+              <select
+                name="prioridad"
+                [(ngModel)]="form.prioridad"
+              >
+                <option value="BAJA">Baja</option>
+                <option value="MEDIA">Media</option>
+                <option value="ALTA">Alta</option>
+              </select>
+            </div>
+
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  name="anonimo"
+                  [(ngModel)]="form.anonimo"
+                />
+                <span>Reportar de forma anónima</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- MAPA -->
+          <div class="form-group">
+            <label>Ubicación del incidente</label>
+            <div id="map" class="map-container"></div>
+
+            <div class="coordinates">
+              <div>
+                <strong>Latitud:</strong>
+                {{ form.latitud }}
+              </div>
+              <div>
+                <strong>Longitud:</strong>
+                {{ form.longitud }}
+              </div>
+            </div>
+          </div>
+
+          <!-- EVIDENCIA -->
+          <div class="form-group">
+            <label>Evidencia (imagen o video)</label>
+            <input
+              type="file"
+              name="evidencia"
+              accept="image/*,video/*"
+              (change)="onFileSelected($event)"
+            />
+            <p class="help-text">
+              Adjunta imágenes o videos relacionados con el incidente.
+            </p>
+          </div>
+
+          <!-- BOTÓN -->
+          <button
+            type="submit"
+            [disabled]="loading"
+            class="submit-btn"
+          >
+            {{ loading ? 'Guardando...' : 'Crear Reporte' }}
+          </button>
+        </form>
+      </section>
+    </main>
+  </div>
 </div>

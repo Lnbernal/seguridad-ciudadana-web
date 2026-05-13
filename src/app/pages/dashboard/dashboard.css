@@ -1,136 +1,427 @@
-
-
-/* Elimina el fondo gris de Tailwind */
-.min-h-screen.bg-gray-100 {
-  background: transparent !important;
+:host {
+  display: block;
+  min-height: 100vh;
 }
 
-/* Tarjeta del encabezado (bg-white) */
-.bg-white.rounded-xl.shadow {
-  background: rgba(20, 20, 40, 0.75) !important;
+/* =========================
+   FONDO GENERAL
+========================= */
+.dashboard-page {
+  min-height: 100vh;
+  padding: 30px;
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 40%),
+    radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.12), transparent 40%),
+    linear-gradient(135deg, #0b1120, #111827 60%, #1e293b);
+  box-sizing: border-box;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: #ffffff;
+}
+
+/* =========================
+   CONTENEDOR PRINCIPAL
+========================= */
+.dashboard-shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 0;
+  min-height: calc(100vh - 60px);
+  border-radius: 28px;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.88);
   backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 24px !important;
-  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
-  color: #eee !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Título principal */
-h1.text-3xl.font-bold.text-gray-800 {
-  background: linear-gradient(135deg, #a0e9ff, #6b8cff) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-  font-size: 2rem !important;
-  margin-bottom: 0.5rem !important;
+/* =========================
+   SIDEBAR
+========================= */
+.sidebar {
+  background: rgba(2, 6, 23, 0.95);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Texto secundario del encabezado */
-p.text-gray-600 {
-  color: rgba(255, 255, 255, 0.7) !important;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 40px;
 }
 
-/* Contenedor de los botones de acción (grid) */
-.grid {
-  gap: 1.5rem;
+.brand-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
 }
 
-/* Estilos base para las tarjetas de acción (enlaces y botón) */
-a.block.rounded-xl.shadow,
-button.rounded-xl.shadow {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-  color: #fff !important;
-  text-decoration: none !important;
+.brand-icon svg {
+  width: 26px;
+  height: 26px;
+  stroke: white;
+  stroke-width: 2;
+  fill: none;
 }
 
-a.block.rounded-xl.shadow:hover,
-button.rounded-xl.shadow:hover {
-  transform: translateY(-4px) !important;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+.brand h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #ffffff;
+  font-weight: 700;
 }
 
-/* Colores individuales para cada tarjeta (gradientes) */
-a.bg-blue-600 {
-  background: linear-gradient(135deg, #4f6ef6, #6b8cff) !important;
+.brand p {
+  margin: 2px 0 0;
+  color: #94a3b8;
+  font-size: 0.9rem;
 }
 
-a.bg-green-600 {
-  background: linear-gradient(135deg, #2ed573, #1abc9c) !important;
+/* =========================
+   MENÚ
+========================= */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-button.bg-red-600 {
-  background: linear-gradient(135deg, #ff4757, #ff6b81) !important;
+.menu-item,
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }
 
-/* Títulos dentro de las tarjetas */
-a h2,
-button h2 {
-  color: #fff !important;
-  font-weight: 700 !important;
+.menu-item svg,
+.logout-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
 }
 
-/* Descripciones dentro de las tarjetas */
-a p,
-button p {
-  color: rgba(255, 255, 255, 0.85) !important;
-  font-weight: 400;
+.menu-item:hover,
+.menu-item.active {
+  background: rgba(59, 130, 246, 0.14);
+  color: #ffffff;
 }
 
-/* Ajuste de padding para que las tarjetas no pierdan forma */
-a.block.p-6,
-button.p-6 {
-  padding: 1.8rem !important;
+.logout-btn {
+  margin-top: auto;
+  color: #fca5a5;
 }
 
-/* Efecto hover individual para cada gradiente (más claro) */
-a.bg-blue-600:hover {
-  background: linear-gradient(135deg, #5d7eff, #7b8fff) !important;
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ffffff;
 }
 
-a.bg-green-600:hover {
-  background: linear-gradient(135deg, #3ae374, #28e0b5) !important;
+/* =========================
+   CONTENIDO
+========================= */
+.main-content {
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
-button.bg-red-600:hover {
-  background: linear-gradient(135deg, #ff5e6b, #ff7f8a) !important;
+/* =========================
+   TOPBAR
+========================= */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* Quitar el outline azul por defecto de Tailwind en el botón */
-button:focus {
-  outline: none !important;
+.topbar h1 {
+  margin: 0;
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: #ffffff;
 }
 
-/* ===== CORRECCIÓN DEL GRID (para que no se apilen) ===== */
-
-/* Aseguramos que el contenedor con clase .grid sea un grid */
-.grid {
-  display: grid !important;
-  gap: 1.5rem; /* mantiene el espacio entre tarjetas */
+.topbar p {
+  margin-top: 6px;
+  color: #94a3b8;
 }
 
-/* En pantallas medianas (md) hacia arriba: 3 columnas */
-@media (min-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr) !important;
+/* =========================
+   USUARIO
+========================= */
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 8px 14px;
+  border-radius: 999px;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+}
+
+/* =========================
+   ESTADÍSTICAS
+========================= */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+.stat-box {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.3s ease;
+}
+
+.stat-box:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+/* =========================
+   ACCIONES
+========================= */
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+.action-card {
+  display: block;
+  text-decoration: none;
+  padding: 28px;
+  border-radius: 22px;
+  color: #ffffff;
+  transition: all 0.35s ease;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+}
+
+.action-card:hover {
+  transform: translateY(-6px);
+}
+
+.action-card.blue {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+.action-card.green {
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+
+.action-card h3 {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.action-card p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* =========================
+   PANEL INFERIOR
+========================= */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 22px;
+}
+
+.panel {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 24px;
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.panel h2 {
+  margin: 0 0 20px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* =========================
+   REPORTE
+========================= */
+.report-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.report-meta {
+  display: grid;
+  gap: 12px;
+}
+
+.report-meta div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.report-meta span:first-child {
+  color: #94a3b8;
+}
+
+.report-meta span:last-child {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* =========================
+   TIMELINE
+========================= */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-top: 6px;
+  background: #3b82f6;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+}
+
+.timeline-content h4 {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.timeline-content p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+/* =========================
+   ANIMACIÓN
+========================= */
+.fade-in {
+  animation: fadeInUp 0.8s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* En pantallas pequeñas: 1 columna (opcional, por si Tailwind no lo aplica) */
-@media (max-width: 767px) {
-  .grid {
-    grid-template-columns: 1fr !important;
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bottom-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-/* Aseguramos que las tarjetas (a y button) se comporten como elementos de grid */
-a.block.rounded-xl.shadow,
-button.rounded-xl.shadow {
-  display: block; /* ya tenían block de Tailwind, lo dejamos */
-  width: 100%;    /* ocupan toda la celda del grid */
+@media (max-width: 1024px) {
+  .dashboard-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    padding: 24px;
+  }
+
+  .logout-btn {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-page {
+    padding: 15px;
+  }
+
+  .main-content {
+    padding: 24px;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .stats-grid,
+  .actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar h1 {
+    font-size: 2rem;
+  }
 }

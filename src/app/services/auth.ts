@@ -2,7 +2,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,72 +12,148 @@ export class Auth {
 
   constructor(private http: HttpClient) {}
 
+  // ======================================================
   // LOGIN
-  login(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, data);
+  // ======================================================
+  login(credentials: {
+    correo: string;
+    contraseña: string;
+  }): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/login`,
+      credentials
+    );
   }
 
+  // ======================================================
   // REGISTRO
-  register(data: any) {
-    return this.http.post(`${this.apiUrl}/auth/register`, data);
+  // ======================================================
+  register(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/register`,
+      data
+    );
   }
 
+  // ======================================================
   // GUARDAR SESIÓN
+  // ======================================================
   saveSession(response: any): void {
-    localStorage.setItem('token', response.token);
-
-    // Guardar usuario si viene en la respuesta
-    if (response.user) {
-      localStorage.setItem('user', JSON.stringify(response.user));
+    if (response?.token) {
+      localStorage.setItem('token', response.token);
     }
+
+    const user =
+      response?.user ||
+      response?.usuario ||
+      response?.data?.user ||
+      response?.data?.usuario;
+
+    if (user) {
+      localStorage.setItem(
+        'user',
+        JSON.stringify(user)
+      );
+    }
+
+    console.log('Usuario guardado:', this.getUser());
+    console.log('Rol detectado:', this.getRole());
   }
 
-  // OBTENER TOKEN
-  getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
-  // OBTENER USUARIO
-  getUser(): any {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
-  }
-
-  // VERIFICAR SI ESTÁ AUTENTICADO
-  isLoggedIn(): boolean {
-    const token = this.getToken();
-    return !!token;
-  }
-
-  // CERRAR SESIÓN
+  // ======================================================
+  // LOGOUT
+  // ======================================================
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   }
 
-  // OBTENER ROL DEL USUARIO
+  // ======================================================
+  // AUTENTICACIÓN
+  // ======================================================
+  isAuthenticated(): boolean {
+    return !!localStorage.getItem('token');
+  }
+
+  // Compatibilidad con tu guard
+  isLoggedIn(): boolean {
+    return this.isAuthenticated();
+  }
+
+  // ======================================================
+  // TOKEN
+  // ======================================================
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  // ======================================================
+  // USUARIO
+  // ======================================================
+  getUser(): any {
+    const rawUser = localStorage.getItem('user');
+
+    if (!rawUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(rawUser);
+    } catch (error) {
+      console.error(
+        'Error leyendo usuario del localStorage:',
+        error
+      );
+      return null;
+    }
+  }
+
+  // ======================================================
+  // ROL NORMALIZADO
+  // ======================================================
   getRole(): string {
     const user = this.getUser();
-    return user?.rol?.nombre_rol || user?.rol || '';
+
+    const rawRole =
+      user?.rol ||
+      user?.role ||
+      user?.nombre_rol ||
+      user?.rol_nombre ||
+      user?.rol?.nombre_rol ||
+      user?.rol?.nombre ||
+      user?.role?.nombre_rol ||
+      user?.role?.nombre ||
+      '';
+
+    return rawRole
+      .toString()
+      .trim()
+      .toUpperCase();
   }
 
-  // VALIDAR SI TIENE UN ROL ESPECÍFICO
-  hasRole(role: string): boolean {
-    return this.getRole() === role;
-  }
-
-  // VALIDAR SI ES ADMINISTRADOR
+  // ======================================================
+  // PERMISOS
+  // ======================================================
   isAdmin(): boolean {
-    return this.hasRole('ADMIN');
+    const role = this.getRole();
+
+    return (
+      role === 'ADMIN' ||
+      role === 'ADMINISTRADOR'
+    );
   }
 
-  // VALIDAR SI ES FUNCIONARIO
-  isFuncionario(): boolean {
-    return this.hasRole('FUNCIONARIO');
+  canEditReports(): boolean {
+    const role = this.getRole();
+
+    return [
+      'ADMIN',
+      'ADMINISTRADOR',
+      'FUNCIONARIO'
+    ].includes(role);
   }
 
-  // VALIDAR SI ES CIUDADANO
-  isCiudadano(): boolean {
-    return this.hasRole('CIUDADANO');
+  canDeleteReports(): boolean {
+    return this.isAdmin();
   }
 }

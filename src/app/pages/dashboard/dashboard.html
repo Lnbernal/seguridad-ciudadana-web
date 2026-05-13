@@ -1,58 +1,152 @@
-<!-- src/app/pages/dashboard/dashboard.html -->
+<div class="dashboard-page">
+  <div class="dashboard-shell fade-in">
 
-<div class="min-h-screen bg-gray-100 p-8">
-  <div class="max-w-6xl mx-auto">
-    <!-- ENCABEZADO -->
-    <div class="bg-white rounded-xl shadow p-6 mb-8">
-      <h1 class="text-3xl font-bold text-gray-800">
-        Panel de Control
-      </h1>
-      <p class="text-gray-600 mt-2">
-        Bienvenido al sistema de Seguridad Ciudadana
-      </p>
-    </div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L4 6V11C4 16 7.4 20.7 12 22C16.6 20.7 20 16 20 11V6L12 2Z"/>
+          </svg>
+        </div>
 
-    <!-- BOTONES DE ACCIÓN -->
-    <div class="grid md:grid-cols-3 gap-6">
-      <!-- NUEVO REPORTE -->
-      <a
-        routerLink="/nuevo-reporte"
-        class="block bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow p-6 text-center transition"
-      >
-        <h2 class="text-xl font-bold mb-2">
+        <div>
+          <h2>Seguridad Ciudadana</h2>
+          <p>Panel Administrativo</p>
+        </div>
+      </div>
+
+      <nav class="menu">
+        <a routerLink="/dashboard" routerLinkActive="active" class="menu-item">
+          Dashboard
+        </a>
+
+        <a routerLink="/nuevo-reporte" class="menu-item">
           Nuevo Reporte
-        </h2>
-        <p class="text-sm opacity-90">
-          Registrar un nuevo incidente ciudadano
-        </p>
-      </a>
+        </a>
 
-      <!-- VER REPORTES -->
-      <a
-        routerLink="/reportes"
-        class="block bg-green-600 hover:bg-green-700 text-white rounded-xl shadow p-6 text-center transition"
-      >
-        <h2 class="text-xl font-bold mb-2">
-          Ver Reportes
-        </h2>
-        <p class="text-sm opacity-90">
-          Consultar todos los reportes registrados
-        </p>
-      </a>
+        <a routerLink="/reportes" class="menu-item">
+          Mis Reportes
+        </a>
+      </nav>
 
-      <!-- CERRAR SESIÓN -->
-      <button
-        type="button"
-        (click)="logout()"
-        class="bg-red-600 hover:bg-red-700 text-white rounded-xl shadow p-6 text-center transition"
-      >
-        <h2 class="text-xl font-bold mb-2">
-          Cerrar Sesión
-        </h2>
-        <p class="text-sm opacity-90">
-          Salir del sistema
-        </p>
+      <button class="logout-btn" (click)="logout()">
+        Cerrar sesión
       </button>
-    </div>
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="main-content">
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div>
+          <h1>Dashboard</h1>
+          <p>
+            Visualiza el estado general del sistema y el seguimiento
+            de tus reportes.
+          </p>
+        </div>
+
+        <div class="user-badge">
+          <div class="avatar"></div>
+          <span>{{ usuario }}</span>
+        </div>
+      </header>
+
+      <!-- ESTADÍSTICAS -->
+      <section class="stats-grid">
+        <div class="stat-box">
+          <span class="stat-label">Reportes Totales</span>
+          <span class="stat-value">{{ totalReportes }}</span>
+        </div>
+
+        <div class="stat-box">
+          <span class="stat-label">En Proceso</span>
+          <span class="stat-value">{{ enProceso }}</span>
+        </div>
+
+        <div class="stat-box">
+          <span class="stat-label">Visualizados</span>
+          <span class="stat-value">{{ visualizados }}</span>
+        </div>
+
+        <div class="stat-box">
+          <span class="stat-label">Resueltos</span>
+          <span class="stat-value">{{ resueltos }}</span>
+        </div>
+      </section>
+
+      <!-- ACCIONES -->
+      <section class="actions-grid">
+        <a routerLink="/nuevo-reporte" class="action-card blue">
+          <h3>Nuevo Reporte</h3>
+          <p>Registrar un incidente ciudadano.</p>
+        </a>
+
+        <a routerLink="/reportes" class="action-card green">
+          <h3>Ver Reportes</h3>
+          <p>Consultar historial y detalles.</p>
+        </a>
+      </section>
+
+      <!-- PANEL INFERIOR -->
+      <section class="bottom-grid">
+        <!-- ÚLTIMO REPORTE -->
+        <div class="panel" *ngIf="ultimoReporte">
+          <h2>Último Reporte</h2>
+
+          <div class="report-title">
+            {{ ultimoReporte.titulo }}
+          </div>
+
+          <div class="report-meta">
+            <div>
+              <span>Categoría</span>
+              <span>
+                {{ ultimoReporte.categoria?.nombre_categoria || 'N/A' }}
+              </span>
+            </div>
+
+            <div>
+              <span>Prioridad</span>
+              <span>{{ ultimoReporte.prioridad }}</span>
+            </div>
+
+            <div>
+              <span>Estado</span>
+              <span>
+                {{ ultimoReporte.estados_reporte?.nombre_estado || 'Pendiente' }}
+              </span>
+            </div>
+
+            <div>
+              <span>Fecha</span>
+              <span>
+                {{ ultimoReporte.fecha_reporte | date:'dd/MM/yyyy' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEGUIMIENTO -->
+        <div class="panel" *ngIf="seguimiento.length > 0">
+          <h2>Seguimiento</h2>
+
+          <div class="timeline">
+            <div
+              class="timeline-item"
+              *ngFor="let item of seguimiento"
+            >
+              <div class="timeline-dot"></div>
+
+              <div class="timeline-content">
+                <h4>{{ item.titulo }}</h4>
+                <p>{{ item.fecha }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
   </div>
 </div>
