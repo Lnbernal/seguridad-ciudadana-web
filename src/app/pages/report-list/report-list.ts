@@ -22,6 +22,7 @@ interface ReportModel {
   anonimo?: boolean;
   latitud?: number | null;
   longitud?: number | null;
+  id_usuario?: number;
 
   categoria?: {
     nombre_categoria: string;
@@ -36,6 +37,7 @@ interface ReportModel {
   };
 
   usuario?: {
+    id_usuario?: number;
     nombre: string;
     apellido: string;
   };
@@ -69,29 +71,72 @@ export class ReportList implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('Usuario autenticado:', this.auth.getUser());
     this.loadReports();
   }
 
+  /**
+   * Cargar reportes.
+   *
+   * Si el usuario es CIUDADANO:
+   * - Solo verá los reportes cuyo id_usuario coincida
+   *   con su id_usuario.
+   *
+   * Si es ADMIN o FUNCIONARIO:
+   * - Verá todos los reportes.
+   */
   loadReports(): void {
     this.loading = true;
     this.error = '';
 
     this.reportService.getAll().subscribe({
       next: (response: any) => {
-        if (response?.reports) {
-          this.reports = response.reports;
+        console.log('Respuesta del backend:', response);
+
+        let reports: ReportModel[] = [];
+
+        // Soporta distintos formatos de respuesta
+        if (response?.reports && Array.isArray(response.reports)) {
+          reports = response.reports;
+        } else if (response?.data && Array.isArray(response.data)) {
+          reports = response.data;
         } else if (Array.isArray(response)) {
-          this.reports = response;
-        } else {
-          this.reports = [];
+          reports = response;
         }
 
+        const role = this.getUserRole();
+        const currentUser = this.auth.getUser();
+
+        console.log('Rol actual:', role);
+        console.log('Usuario actual:', currentUser);
+
+        // Filtrar SOLO para ciudadanos
+        if (role === 'CIUDADANO') {
+          const currentUserId = Number(currentUser?.id_usuario);
+
+          reports = reports.filter((report: ReportModel) => {
+            const reportUserId = Number(
+              report.usuario?.id_usuario ??
+              report.id_usuario ??
+              0
+            );
+
+            console.log(
+              `Reporte ${report.id_reporte}: usuario=${reportUserId}, actual=${currentUserId}`
+            );
+
+            return reportUserId === currentUserId;
+          });
+
+          console.log('Reportes del ciudadano:', reports);
+        }
+
+        this.reports = reports;
         this.loading = false;
         this.cdr.detectChanges();
       },
       error: (err: any) => {
         console.error('Error cargando reportes:', err);
+
         this.error = 'No se pudieron cargar los reportes.';
         this.loading = false;
         this.cdr.detectChanges();
@@ -100,13 +145,10 @@ export class ReportList implements OnInit {
   }
 
   /**
-   * Obtiene el rol del usuario sin importar
-   * cómo venga estructurado en el objeto.
+   * Obtener rol del usuario.
    */
   private getUserRole(): string {
     const user = this.auth.getUser();
-
-    console.log('Usuario autenticado:', user);
 
     const rawRole =
       user?.rol ||
@@ -119,14 +161,10 @@ export class ReportList implements OnInit {
       user?.role?.nombre ||
       '';
 
-    const role = rawRole
+    return rawRole
       .toString()
       .trim()
       .toUpperCase();
-
-    console.log('Rol normalizado:', role);
-
-    return role;
   }
 
   /**
@@ -150,18 +188,15 @@ export class ReportList implements OnInit {
    * - ADMIN
    * - ADMINISTRADOR
    */
-  // En report-list.ts, reemplaza SOLO este método.
-
   canDelete(): boolean {
     const role = this.getUserRole();
 
-    console.log('Rol para eliminar:', role);
-
-    // Si el rol viene como objeto o como texto diferente,
-    // esta validación permite ADMIN en cualquier formato.
     return role.includes('ADMIN');
   }
 
+  /**
+   * Eliminar reporte.
+   */
   deleteReport(id: number): void {
     const confirmar = confirm(
       '¿Deseas eliminar este reporte? Esta acción no se puede deshacer.'
@@ -187,6 +222,9 @@ export class ReportList implements OnInit {
     });
   }
 
+  /**
+   * Cerrar sesión.
+   */
   logout(): void {
     this.auth.logout();
     this.router.navigate(['/login']);

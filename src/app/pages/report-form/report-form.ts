@@ -9,7 +9,7 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router,RouterModule  } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 import * as L from 'leaflet';
 
@@ -17,6 +17,7 @@ import { Report } from '../../services/report';
 import { Category } from '../../services/category';
 import { Municipality } from '../../services/municipality';
 import { Evidence } from '../../services/evidence';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-report-form',
@@ -55,6 +56,7 @@ export class ReportForm implements OnInit, AfterViewInit {
     private categoryService: Category,
     private municipalityService: Municipality,
     private evidenceService: Evidence,
+    private auth: Auth,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
@@ -65,7 +67,6 @@ export class ReportForm implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Esperamos a que Angular renderice el contenedor del mapa
     setTimeout(() => this.initMap(), 100);
   }
 
@@ -93,7 +94,6 @@ export class ReportForm implements OnInit, AfterViewInit {
 
   getLocation(): void {
     if (!navigator.geolocation) {
-      // Coordenadas por defecto: Chía, Cundinamarca
       this.form.latitud = 4.8623;
       this.form.longitud = -74.0328;
       return;
@@ -119,7 +119,6 @@ export class ReportForm implements OnInit, AfterViewInit {
         this.cdr.detectChanges();
       },
       () => {
-        // Si el usuario no permite geolocalización
         this.form.latitud = 4.8623;
         this.form.longitud = -74.0328;
 
@@ -160,20 +159,17 @@ export class ReportForm implements OnInit, AfterViewInit {
       draggable: true
     }).addTo(this.map);
 
-    // Al arrastrar el marcador
     this.marker.on('dragend', () => {
       const pos = this.marker.getLatLng();
       this.updateCoordinates(pos.lat, pos.lng);
     });
 
-    // Al hacer clic en el mapa
     this.map.on('click', (e: L.LeafletMouseEvent) => {
       const { lat, lng } = e.latlng;
       this.marker.setLatLng([lat, lng]);
       this.updateCoordinates(lat, lng);
     });
 
-    // Corrige tamaño del mapa
     setTimeout(() => this.map.invalidateSize(), 300);
   }
 
@@ -194,12 +190,34 @@ export class ReportForm implements OnInit, AfterViewInit {
   submit(): void {
     this.loading = true;
 
+    const currentUser = this.auth.getUser();
+
+    console.log('Usuario autenticado:', currentUser);
+
+    const userId =
+      currentUser?.id_usuario ||
+      currentUser?.user?.id_usuario ||
+      currentUser?.id ||
+      null;
+
+    console.log('ID del usuario detectado:', userId);
+
+    if (!userId) {
+      alert('No se encontró el usuario autenticado.');
+      this.loading = false;
+      this.cdr.detectChanges();
+      return;
+    }
+
     const payload = {
       ...this.form,
       id_categoria: Number(this.form.id_categoria),
       id_municipio: Number(this.form.id_municipio),
-      id_estado: 1
+      id_estado: 1,
+      id_usuario: Number(userId)
     };
+
+    console.log('Payload enviado al backend:', payload);
 
     this.reportService.create(payload).subscribe({
       next: (response: any) => {
@@ -207,7 +225,7 @@ export class ReportForm implements OnInit, AfterViewInit {
           response?.report?.id_reporte ||
           response?.id_reporte;
 
-        // Si no hay archivo, finalizar
+        // Si no hay evidencia, terminar aquí
         if (!this.selectedFile || !reportId) {
           alert('Reporte creado correctamente');
           this.router.navigate(['/reportes']);
@@ -234,10 +252,18 @@ export class ReportForm implements OnInit, AfterViewInit {
 
       error: (err: any) => {
         console.error('Error creando reporte', err);
-        alert('Error creando reporte');
+        alert(
+          err?.error?.message || 'Error creando reporte'
+        );
         this.loading = false;
         this.cdr.detectChanges();
       }
     });
   }
+  // Agrega este método al final de la clase ReportForm en report-form.ts
+
+logout(): void {
+  this.auth.logout();
+  this.router.navigate(['/login']);
+}
 }

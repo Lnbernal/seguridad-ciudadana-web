@@ -3,6 +3,7 @@
 import {
   Component,
   OnInit,
+  AfterViewInit,
   ChangeDetectorRef
 } from '@angular/core';
 
@@ -12,6 +13,8 @@ import {
   Router,
   RouterModule
 } from '@angular/router';
+
+import * as L from 'leaflet';
 
 import { Report } from '../../services/report';
 import { Auth } from '../../services/auth';
@@ -27,10 +30,14 @@ import { Auth } from '../../services/auth';
   templateUrl: './report-detail.html',
   styleUrls: ['./report-detail.css']
 })
-export class ReportDetail implements OnInit {
+export class ReportDetail implements OnInit, AfterViewInit {
   report: any = null;
   loading = true;
   error = '';
+
+  map!: L.Map;
+  marker!: L.Marker;
+  mapInitialized = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,6 +59,10 @@ export class ReportDetail implements OnInit {
     this.loadReport(id);
   }
 
+  ngAfterViewInit(): void {
+    // El mapa se inicializa después de cargar el reporte.
+  }
+
   loadReport(id: number): void {
     this.loading = true;
     this.error = '';
@@ -60,7 +71,18 @@ export class ReportDetail implements OnInit {
       next: (data: any) => {
         this.report = data?.report || data;
         this.loading = false;
+
         this.cdr.detectChanges();
+
+        // Inicializar mapa si hay coordenadas
+        if (
+          this.report?.latitud != null &&
+          this.report?.longitud != null
+        ) {
+          setTimeout(() => {
+            this.initMap();
+          }, 200);
+        }
       },
       error: (err: any) => {
         console.error('Error cargando reporte:', err);
@@ -69,6 +91,48 @@ export class ReportDetail implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  /**
+   * Inicializa el mapa con Leaflet.
+   */
+  initMap(): void {
+    if (!this.report) {
+      return;
+    }
+
+    const lat = Number(this.report.latitud);
+    const lng = Number(this.report.longitud);
+
+    if (isNaN(lat) || isNaN(lng)) {
+      return;
+    }
+
+    // Si ya existe, destruirlo antes de recrearlo
+    if (this.map) {
+      this.map.remove();
+    }
+
+    this.map = L.map('detail-map', {
+      center: [lat, lng],
+      zoom: 16
+    });
+
+    L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        attribution: '&copy; OpenStreetMap contributors'
+      }
+    ).addTo(this.map);
+
+    this.marker = L.marker([lat, lng]).addTo(this.map);
+
+    // Ajustar tamaño del mapa
+    setTimeout(() => {
+      this.map.invalidateSize();
+    }, 300);
+
+    this.mapInitialized = true;
   }
 
   // ==========================
@@ -90,12 +154,21 @@ export class ReportDetail implements OnInit {
 
   canEdit(): boolean {
     const rol = this.getUserRole();
-    return rol === 'ADMIN' || rol === 'FUNCIONARIO';
+
+    return (
+      rol === 'ADMIN' ||
+      rol === 'ADMINISTRADOR' ||
+      rol === 'FUNCIONARIO'
+    );
   }
 
   canDelete(): boolean {
     const rol = this.getUserRole();
-    return rol === 'ADMIN';
+
+    return (
+      rol === 'ADMIN' ||
+      rol === 'ADMINISTRADOR'
+    );
   }
 
   // ==========================

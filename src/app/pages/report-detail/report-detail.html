@@ -86,6 +86,14 @@
             <span class="label">Dirección</span>
             <strong>{{ report.direccion || 'No especificada' }}</strong>
           </div>
+          <!-- MAPA -->
+          <div
+            *ngIf="report.latitud && report.longitud"
+            class="map-section"
+          >
+            <h3>Ubicación del reporte</h3>
+            <div id="detail-map" class="detail-map"></div>
+          </div>
 
           <div>
             <span class="label">Fecha</span>

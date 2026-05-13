@@ -28,6 +28,14 @@
         <a routerLink="/reportes" class="menu-item">
           Mis Reportes
         </a>
+        <a
+        *ngIf="isAdmin()"
+        routerLink="/admin/users"
+        class="menu-item"
+      >
+        <i class="fas fa-users-cog"></i>
+        <span>Administrar Usuarios</span>
+      </a>
       </nav>
 
       <button class="logout-btn" (click)="logout()">

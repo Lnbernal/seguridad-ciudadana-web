@@ -9,7 +9,7 @@ import { Dashboard } from './pages/dashboard/dashboard';
 import { ReportForm } from './pages/report-form/report-form';
 import { ReportList } from './pages/report-list/report-list';
 import { ReportDetail } from './pages/report-detail/report-detail';
-
+import { AdminUsers } from './pages/admin-users/admin-users';
 import { authGuard } from './guards/auth';
 import { roleGuard } from './guards/role.guard';
 
@@ -17,6 +17,10 @@ export const routes: Routes = [
   // =========================
   // RUTAS PÚBLICAS
   // =========================
+  {
+  path: 'admin/users',
+  component: AdminUsers
+  },
   {
     path: '',
     component: Home

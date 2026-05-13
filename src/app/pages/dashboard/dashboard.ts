@@ -147,7 +147,20 @@ export class Dashboard implements OnInit {
       });
     }
   }
+  isAdmin(): boolean {
+  const user = this.auth.getUser();
 
+  const role =
+    user?.rol ||
+    user?.role?.nombre_rol ||
+    user?.role?.nombre ||
+    '';
+
+  return role
+    .toString()
+    .trim()
+    .toUpperCase() === 'ADMIN';
+}
   logout(): void {
     this.auth.logout();
     this.router.navigate(['/login']);
