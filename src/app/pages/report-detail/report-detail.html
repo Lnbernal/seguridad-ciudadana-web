@@ -56,12 +56,7 @@
       <div *ngIf="report" class="dashboard-panel">
         <div class="detail-header">
           <h1>{{ report.titulo }}</h1>
-          <a
-            [routerLink]="['/reportes/editar', report.id_reporte]"
-            class="edit-btn"
-          >
-            Editar
-          </a>
+  
         </div>
 
         <p class="description">{{ report.descripcion }}</p>

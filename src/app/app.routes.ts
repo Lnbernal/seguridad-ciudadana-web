@@ -1,3 +1,5 @@
+// src/app/app.routes.ts
+
 import { Routes } from '@angular/router';
 
 import { Home } from './pages/home/home';
@@ -7,35 +9,84 @@ import { Dashboard } from './pages/dashboard/dashboard';
 import { ReportForm } from './pages/report-form/report-form';
 import { ReportList } from './pages/report-list/report-list';
 import { ReportDetail } from './pages/report-detail/report-detail';
+
 import { authGuard } from './guards/auth';
+import { roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
-  { path: '', component: Home },
-  { path: 'login', component: Login },
+  // =========================
+  // RUTAS PÚBLICAS
+  // =========================
   {
-  path: 'register',
-  loadComponent: () =>
-    import('./pages/register/register').then(m => m.Register)
-},
+    path: '',
+    component: Home
+  },
+  {
+    path: 'login',
+    component: Login
+  },
+  {
+    path: 'register',
+    component: Register
+  },
 
+  // =========================
+  // DASHBOARD
+  // =========================
   {
     path: 'dashboard',
     component: Dashboard,
     canActivate: [authGuard]
   },
+
+  // =========================
+  // LISTADO DE REPORTES
+  // =========================
   {
     path: 'reportes',
     component: ReportList,
     canActivate: [authGuard]
   },
+
+  // =========================
+  // CREAR REPORTE
+  // =========================
   {
     path: 'nuevo-reporte',
     component: ReportForm,
-    canActivate: [authGuard]
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['ADMIN', 'FUNCIONARIO', 'CIUDADANO']
+    }
   },
+
+  // =========================
+  // VER DETALLE
+  // =========================
   {
     path: 'reportes/:id',
-    component: ReportDetail
+    component: ReportDetail,
+    canActivate: [authGuard]
   },
-  { path: '**', redirectTo: '' }
+
+  // =========================
+  // EDITAR REPORTE
+  // (usa ReportForm por ahora)
+  // =========================
+  {
+    path: 'reportes/editar/:id',
+    component: ReportForm,
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['ADMIN', 'FUNCIONARIO']
+    }
+  },
+
+  // =========================
+  // FALLBACK
+  // =========================
+  {
+    path: '**',
+    redirectTo: ''
+  }
 ];
