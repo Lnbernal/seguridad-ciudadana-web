@@ -4,12 +4,13 @@ import {
   HttpHeaders
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Category {
-  private apiUrl = 'http://localhost:8080/api/categories';
+  private apiUrl = `${environment.apiUrl}/categories`;
 
   constructor(private http: HttpClient) {}
 
@@ -22,11 +23,8 @@ export class Category {
   }
 
   getAll(): Observable<any[]> {
-    return this.http.get<any[]>(
-      this.apiUrl,
-      {
-        headers: this.getHeaders()
-      }
-    );
+    return this.http.get<any[]>(this.apiUrl, {
+      headers: this.getHeaders()
+    });
   }
 }

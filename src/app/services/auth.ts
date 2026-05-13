@@ -1,20 +1,16 @@
-// src/app/services/auth.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Auth {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   constructor(private http: HttpClient) {}
 
-  // ======================================================
-  // LOGIN
-  // ======================================================
   login(credentials: {
     correo: string;
     contraseña: string;
@@ -25,9 +21,6 @@ export class Auth {
     );
   }
 
-  // ======================================================
-  // REGISTRO
-  // ======================================================
   register(data: any): Observable<any> {
     return this.http.post<any>(
       `${this.apiUrl}/register`,
@@ -35,9 +28,6 @@ export class Auth {
     );
   }
 
-  // ======================================================
-  // GUARDAR SESIÓN
-  // ======================================================
   saveSession(response: any): void {
     if (response?.token) {
       localStorage.setItem('token', response.token);
@@ -55,62 +45,37 @@ export class Auth {
         JSON.stringify(user)
       );
     }
-
-    console.log('Usuario guardado:', this.getUser());
-    console.log('Rol detectado:', this.getRole());
   }
 
-  // ======================================================
-  // LOGOUT
-  // ======================================================
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   }
 
-  // ======================================================
-  // AUTENTICACIÓN
-  // ======================================================
   isAuthenticated(): boolean {
     return !!localStorage.getItem('token');
   }
 
-  // Compatibilidad con tu guard
   isLoggedIn(): boolean {
     return this.isAuthenticated();
   }
 
-  // ======================================================
-  // TOKEN
-  // ======================================================
   getToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  // ======================================================
-  // USUARIO
-  // ======================================================
   getUser(): any {
     const rawUser = localStorage.getItem('user');
 
-    if (!rawUser) {
-      return null;
-    }
+    if (!rawUser) return null;
 
     try {
       return JSON.parse(rawUser);
-    } catch (error) {
-      console.error(
-        'Error leyendo usuario del localStorage:',
-        error
-      );
+    } catch {
       return null;
     }
   }
 
-  // ======================================================
-  // ROL NORMALIZADO
-  // ======================================================
   getRole(): string {
     const user = this.getUser();
 
@@ -131,26 +96,13 @@ export class Auth {
       .toUpperCase();
   }
 
-  // ======================================================
-  // PERMISOS
-  // ======================================================
   isAdmin(): boolean {
-    const role = this.getRole();
-
-    return (
-      role === 'ADMIN' ||
-      role === 'ADMINISTRADOR'
-    );
+    return this.getRole() === 'ADMIN';
   }
 
   canEditReports(): boolean {
-    const role = this.getRole();
-
-    return [
-      'ADMIN',
-      'ADMINISTRADOR',
-      'FUNCIONARIO'
-    ].includes(role);
+    return ['ADMIN', 'OPERADOR', 'ALCALDIA']
+      .includes(this.getRole());
   }
 
   canDeleteReports(): boolean {
