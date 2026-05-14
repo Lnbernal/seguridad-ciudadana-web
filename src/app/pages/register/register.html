@@ -91,22 +91,6 @@
       <h1 class="card-title">Crea tu cuenta</h1>
       <p class="card-subtitle">Completa el formulario para comenzar a reportar.</p>
 
-      <!-- Error -->
-      <div *ngIf="error" class="error-box">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-        {{ error }}
-      </div>
-
-      <!-- Éxito -->
-      <div *ngIf="mensaje" class="success-box">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-        </svg>
-        {{ mensaje }}
-      </div>
-
       <form (ngSubmit)="registrar()" class="register-form">
 
         <div class="form-row">
@@ -116,7 +100,14 @@
               <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
               </svg>
-              <input id="nombre" type="text" name="nombre" [(ngModel)]="form.nombre" required placeholder="Tu nombre"/>
+              <input
+                id="nombre"
+                type="text"
+                name="nombre"
+                [(ngModel)]="form.nombre"
+                required
+                placeholder="Tu nombre"
+              />
             </div>
           </div>
 
@@ -126,7 +117,14 @@
               <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
               </svg>
-              <input id="apellido" type="text" name="apellido" [(ngModel)]="form.apellido" required placeholder="Tu apellido"/>
+              <input
+                id="apellido"
+                type="text"
+                name="apellido"
+                [(ngModel)]="form.apellido"
+                required
+                placeholder="Tu apellido"
+              />
             </div>
           </div>
         </div>
@@ -137,7 +135,14 @@
             <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
             </svg>
-            <input id="correo" type="email" name="correo" [(ngModel)]="form.correo" required placeholder="correo@ejemplo.com"/>
+            <input
+              id="correo"
+              type="email"
+              name="correo"
+              [(ngModel)]="form.correo"
+              required
+              placeholder="correo@ejemplo.com"
+            />
           </div>
         </div>
 
@@ -147,24 +152,66 @@
             <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
-            <input id="password" type="password" name="password" [(ngModel)]="form.password" required placeholder="••••••••"/>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              [(ngModel)]="form.password"
+              required
+              placeholder="••••••••"
+            />
           </div>
         </div>
 
         <div class="form-group">
-          <label for="telefono">Teléfono <span class="optional">(opcional)</span></label>
+          <label for="telefono">
+            Teléfono <span class="optional">(opcional)</span>
+          </label>
           <div class="input-wrap">
             <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.29 6.29l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
             </svg>
-            <input id="telefono" type="text" name="telefono" [(ngModel)]="form.telefono" placeholder="+57 300 000 0000"/>
+            <input
+              id="telefono"
+              type="text"
+              name="telefono"
+              [(ngModel)]="form.telefono"
+              placeholder="+57 300 000 0000"
+            />
           </div>
         </div>
 
-        <button type="submit" class="btn-submit" [disabled]="loading">
-          <svg *ngIf="!loading" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
+        <!-- ✅ Mensajes justo antes del botón — imposibles de perder -->
+        <div *ngIf="error" class="error-box" role="alert">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
+          {{ error }}
+        </div>
+
+        <div *ngIf="mensaje" class="success-box" role="status">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          {{ mensaje }}
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="loading || success">
+          <svg *ngIf="!loading" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <line x1="19" y1="8" x2="19" y2="14"/>
+            <line x1="22" y1="11" x2="16" y2="11"/>
+          </svg>
+
+          <!-- Spinner mientras carga -->
+          <svg *ngIf="loading" class="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M12 2a10 10 0 0 1 10 10"/>
+          </svg>
+
           {{ loading ? 'Creando cuenta...' : 'Crear mi cuenta' }}
         </button>
 
@@ -178,4 +225,4 @@
     </div>
   </div>
 
-</div>
+</div> 

@@ -425,3 +425,81 @@
 @media (max-width: 480px) {
   .form-row { grid-template-columns: 1fr; }
 }
+
+/* Pega esto al final de register.css */
+
+/* Spinner animado en el botón */
+.spinner {
+  animation: spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Los mensajes dentro del form fluyen con el resto de campos */
+.register-form .error-box,
+.register-form .success-box {
+  margin-bottom: 0;   /* el gap del form ya da el espacio */
+  animation: slideDown 0.2s ease both;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.error-box,
+.success-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.error-box {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.success-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.error-box svg,
+.success-box svg {
+  flex-shrink: 0;
+}
+
+/* Pega esto al final de register.css */
+
+/* Spinner animado en el botón */
+.spinner {
+  animation: spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Los mensajes dentro del form fluyen con el resto de campos */
+.register-form .error-box,
+.register-form .success-box {
+  margin-bottom: 0;   /* el gap del form ya da el espacio */
+  animation: slideDown 0.2s ease both;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
