@@ -173,15 +173,7 @@ export class ReportList implements OnInit {
    * - ADMINISTRADOR
    * - FUNCIONARIO
    */
-  canEdit(): boolean {
-    const role = this.getUserRole();
 
-    return [
-      'ADMIN',
-      'ADMINISTRADOR',
-      'FUNCIONARIO'
-    ].includes(role);
-  }
 
   /**
    * Puede eliminar:

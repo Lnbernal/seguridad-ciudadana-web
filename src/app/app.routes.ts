@@ -81,10 +81,6 @@ export const routes: Routes = [
   {
     path: 'reportes/editar/:id',
     component: EditReport,
-    canActivate: [authGuard, roleGuard],
-    data: {
-      roles: ['ADMIN', 'FUNCIONARIO']
-    }
   },
 
   // =========================

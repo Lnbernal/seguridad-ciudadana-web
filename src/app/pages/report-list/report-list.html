@@ -188,7 +188,7 @@
               Ver Detalle
             </a>
 
-            @if (canEdit()) {
+           
               <a
                 [routerLink]="['/reportes/editar', report.id_reporte]"
                 class="action-btn warning"
@@ -196,7 +196,7 @@
                 <i class="fas fa-pen"></i>
                 Editar
               </a>
-            }
+            
 
             @if (canDelete()) {
               <button
