@@ -2,7 +2,8 @@
 
 <div class="dashboard-page">
   <div class="dashboard-shell">
-    <!-- SIDEBAR -->
+
+    <!-- ── SIDEBAR ──────────────────────────────────────────── -->
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-icon">
@@ -15,6 +16,8 @@
       </div>
 
       <nav class="menu">
+        <div class="menu-section-label">PRINCIPAL</div>
+
         <a routerLink="/dashboard" class="menu-item">
           <i class="fas fa-chart-line"></i>
           <span>Dashboard</span>
@@ -29,6 +32,23 @@
           <i class="fas fa-folder-open"></i>
           <span>Mis Reportes</span>
         </a>
+
+        <div class="menu-section-label">ADMINISTRACIÓN</div>
+
+        <a routerLink="/usuarios" class="menu-item">
+          <i class="fas fa-users"></i>
+          <span>Gestionar Usuarios</span>
+        </a>
+
+        <a routerLink="/mapa" class="menu-item">
+          <i class="fas fa-map-marked-alt"></i>
+          <span>Mapa de Incidentes</span>
+        </a>
+
+        <a routerLink="/estadisticas" class="menu-item">
+          <i class="fas fa-chart-bar"></i>
+          <span>Estadísticas</span>
+        </a>
       </nav>
 
       <button class="logout-btn" type="button" (click)="logout()">
@@ -37,9 +57,10 @@
       </button>
     </aside>
 
-    <!-- CONTENIDO -->
+    <!-- ── MAIN ─────────────────────────────────────────────── -->
     <main class="main-content">
-      <!-- HEADER -->
+
+      <!-- TOPBAR -->
       <div class="topbar">
         <div>
           <h1>Mis Reportes</h1>
@@ -62,45 +83,46 @@
         {{ error }}
       </div>
 
-      <!-- SIN DATOS -->
+      <!-- EMPTY -->
       <div *ngIf="!loading && reports.length === 0" class="dashboard-panel">
-        <p>No hay reportes registrados.</p>
+        <p>No hay reportes registrados aún.</p>
       </div>
 
-      <!-- LISTA -->
+      <!-- GRID -->
       <div *ngIf="!loading && reports.length > 0" class="reports-grid">
+
         <div
           *ngFor="let report of reports"
           class="report-card fade-in"
         >
-          <!-- CABECERA -->
+          <!-- Cabecera: título + prioridad -->
           <div class="report-header">
             <div>
               <h2>{{ report.titulo }}</h2>
-              <p class="report-category">
+              <span class="report-category">
+                <i class="fas fa-tag"></i>
                 {{ report.categoria?.nombre_categoria || 'Sin categoría' }}
-              </p>
+              </span>
             </div>
 
             <span
               class="priority-badge"
               [ngClass]="{
-                'priority-low': report.prioridad === 'BAJA',
+                'priority-low':    report.prioridad === 'BAJA',
                 'priority-medium': report.prioridad === 'MEDIA',
-                'priority-high': report.prioridad === 'ALTA'
+                'priority-high':   report.prioridad === 'ALTA'
               }"
             >
               {{ report.prioridad }}
             </span>
           </div>
 
-          <!-- DESCRIPCIÓN -->
-          <p class="report-description">
-            {{ report.descripcion }}
-          </p>
+          <!-- Descripción -->
+          <p class="report-description">{{ report.descripcion }}</p>
 
-          <!-- INFORMACIÓN -->
+          <!-- Metadata -->
           <div class="report-meta">
+
             <div class="meta-item">
               <span class="meta-label">Estado</span>
               <span class="status-badge">
@@ -133,15 +155,15 @@
                 }}
               </span>
             </div>
+
           </div>
 
-          <!-- EVIDENCIAS -->
+          <!-- Evidencias -->
           <div
             *ngIf="report.evidencias && report.evidencias.length > 0"
             class="evidence-section"
           >
-            <h3>Evidencias</h3>
-
+            <h3>Evidencias adjuntas</h3>
             <div class="evidence-list">
               <a
                 *ngFor="let evidencia of report.evidencias"
@@ -155,36 +177,41 @@
             </div>
           </div>
 
-         <!-- Reemplaza el bloque de acciones en report-list.html por este -->
+          <!-- Acciones -->
+          <div class="report-actions">
 
-       <div class="report-actions">
-        <a
-          [routerLink]="['/reportes', report.id_reporte]"
-          class="action-btn"
-        >
-          Ver Detalle
-        </a>
+            <a
+              [routerLink]="['/reportes', report.id_reporte]"
+              class="action-btn"
+            >
+              <i class="fas fa-eye"></i>
+              Ver Detalle
+            </a>
 
-        @if (canEdit()) {
-          <a
-            [routerLink]="['/reportes/editar', report.id_reporte]"
-            class="action-btn warning"
-          >
-            Editar
-          </a>
-        }
+            @if (canEdit()) {
+              <a
+                [routerLink]="['/reportes/editar', report.id_reporte]"
+                class="action-btn warning"
+              >
+                <i class="fas fa-pen"></i>
+                Editar
+              </a>
+            }
 
-        @if (canDelete()) {
-          <button
-            type="button"
-            (click)="deleteReport(report.id_reporte)"
-            class="action-btn delete"
-          >
-            Eliminar
-          </button>
-        }
-      </div>
+            @if (canDelete()) {
+              <button
+                type="button"
+                (click)="deleteReport(report.id_reporte)"
+                class="action-btn delete"
+              >
+                <i class="fas fa-trash-alt"></i>
+                Eliminar
+              </button>
+            }
+
+          </div>
         </div>
+
       </div>
     </main>
   </div>

@@ -1,259 +1,231 @@
-/* src/app/pages/admin-users/admin-users.css */
+/* ============================================================
+   ADMIN USERS — mantiene el estilo del dashboard
+   ============================================================ */
 
-.dashboard-page {
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, #132f66 0%, #081224 45%, #06101f 100%);
-  padding: 20px;
-  color: #ffffff;
-  font-family: 'Inter', sans-serif;
-}
+@import '../dashboard/dashboard.css';
 
-.dashboard-shell {
-  display: flex;
-  min-height: calc(100vh - 40px);
-  background: rgba(8, 18, 36, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 28px;
-  overflow: hidden;
-  backdrop-filter: blur(12px);
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
-}
-
-/* ======================
-   SIDEBAR
-====================== */
-.sidebar {
-  width: 280px;
-  background: rgba(2, 10, 28, 0.95);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 32px 22px;
-  display: flex;
-  flex-direction: column;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 40px;
-}
-
-.brand-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #1d9bf0, #3b82f6);
-  box-shadow: 0 0 24px rgba(29, 155, 240, 0.45);
-  font-size: 20px;
-}
-
-.brand h2 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 800;
-  line-height: 1.1;
-}
-
-.brand p {
-  margin: 2px 0 0;
-  font-size: 13px;
-  color: #93a4c7;
-}
-
-.menu {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  color: #dbe7ff;
-  text-decoration: none;
-  transition: all 0.25s ease;
-  font-weight: 600;
-}
-
-.menu-item:hover,
-.menu-item.active {
-  background: rgba(59, 130, 246, 0.18);
-  color: #ffffff;
-}
-
-.logout-btn {
-  margin-top: auto;
-  background: transparent;
-  border: none;
-  color: #ff8f8f;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  font-weight: 600;
-  transition: all 0.25s ease;
-}
-
-.logout-btn:hover {
-  background: rgba(239, 68, 68, 0.12);
-}
-
-/* ======================
-   MAIN CONTENT
-====================== */
-.main-content {
-  flex: 1;
-  padding: 42px;
-  overflow-y: auto;
-}
-
-.topbar {
-  margin-bottom: 28px;
-}
-
-.topbar h1 {
-  margin: 0;
-  font-size: 42px;
-  font-weight: 800;
-  line-height: 1.1;
-}
-
-.topbar p {
-  margin-top: 8px;
-  color: #9eb0d4;
-  font-size: 15px;
-}
-
-/* ======================
-   PANELS
-====================== */
-.dashboard-panel,
-.error-panel {
-  background: rgba(15, 30, 60, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 22px;
-  padding: 28px;
-  backdrop-filter: blur(10px);
-}
-
-.error-panel {
-  color: #ff9b9b;
-  border-color: rgba(239, 68, 68, 0.25);
-}
-
-/* ======================
-   TABLE
-====================== */
+/* ── Table wrapper ──────────────────────────────────────────── */
 .table-wrapper {
   overflow-x: auto;
+  border-radius: 12px;
 }
 
+.table-wrapper::-webkit-scrollbar { height: 4px; }
+.table-wrapper::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 4px; }
+
+/* ── Table ──────────────────────────────────────────────────── */
 .users-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 13px;
+}
+
+/* Head */
+.users-table thead tr {
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
 }
 
 .users-table th {
   text-align: left;
-  padding: 16px;
-  font-size: 13px;
+  padding: 12px 16px;
+  font-size: 10px;
   font-weight: 700;
-  color: #93a4c7;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-transform: uppercase;
+  letter-spacing: .9px;
+  color: #3d5570;
+  white-space: nowrap;
+}
+
+/* Body */
+.users-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, .04);
+  transition: background .15s;
+}
+
+.users-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.users-table tbody tr:hover {
+  background: rgba(255, 255, 255, .025);
 }
 
 .users-table td {
-  padding: 18px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: #ffffff;
+  padding: 14px 16px;
+  color: #c8d8ef;
+  vertical-align: middle;
 }
 
-.users-table tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+/* User cell: avatar + nombre */
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* ======================
-   FORM ELEMENTS
-====================== */
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #7c3aed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  letter-spacing: .3px;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #e8f0fe;
+  font-size: 13px;
+}
+
+/* Email */
+.user-email {
+  color: #7a93b8;
+  font-size: 12.5px;
+}
+
+/* Rol actual badge */
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  background: rgba(59, 130, 246, .1);
+  border: 1px solid rgba(59, 130, 246, .18);
+  color: #93c5fd;
+}
+
+.role-badge::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.role-badge.admin {
+  background: rgba(167, 139, 250, .1);
+  border-color: rgba(167, 139, 250, .2);
+  color: #a78bfa;
+}
+
+.role-badge.ciudadano {
+  background: rgba(34, 197, 94, .1);
+  border-color: rgba(34, 197, 94, .18);
+  color: #22c55e;
+}
+
+/* ── Select ─────────────────────────────────────────────────── */
 select {
   width: 100%;
-  min-width: 180px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(6, 15, 35, 0.9);
-  color: #ffffff;
+  min-width: 160px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, .08);
+  background: rgba(255, 255, 255, .04);
+  color: #c8d8ef;
+  font-size: 12.5px;
+  font-family: inherit;
   outline: none;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a93b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
 }
 
+select:hover {
+  border-color: rgba(255, 255, 255, .14);
+  background-color: rgba(255, 255, 255, .06);
+}
+
+select:focus {
+  border-color: rgba(59, 130, 246, .4);
+  background-color: rgba(59, 130, 246, .06);
+}
+
+select option {
+  background: #0d1626;
+  color: #c8d8ef;
+}
+
+/* ── Save button ────────────────────────────────────────────── */
 .save-btn {
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  border: none;
-  color: #ffffff;
-  padding: 10px 18px;
-  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(34, 197, 94, .12);
+  border: 1px solid rgba(34, 197, 94, .2);
+  color: #22c55e;
+  padding: 7px 14px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 700;
-  transition: all 0.25s ease;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all .18s ease;
+  white-space: nowrap;
 }
 
 .save-btn:hover {
+  background: rgba(34, 197, 94, .2);
+  border-color: rgba(34, 197, 94, .35);
   transform: translateY(-1px);
-  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 4px 14px rgba(34, 197, 94, .18);
 }
 
+/* ── Empty state ────────────────────────────────────────────── */
 .empty-state {
   text-align: center;
-  color: #93a4c7;
-  padding: 30px;
+  color: #3d5570;
+  padding: 40px 20px;
+  font-size: 13px;
 }
 
-/* ======================
-   ANIMATIONS
-====================== */
+/* ── Error panel ────────────────────────────────────────────── */
+.error-panel {
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, .1);
+  border: 1px solid rgba(239, 68, 68, .22);
+  color: #fca5a5;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.error-panel::before {
+  content: '⚠';
+  font-size: 14px;
+}
+
+/* ── Animations ─────────────────────────────────────────────── */
 .fade-in {
-  animation: fadeInUp 0.45s ease;
+  animation: fadeUp .35s ease both;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ======================
-   RESPONSIVE
-====================== */
-@media (max-width: 992px) {
-  .dashboard-shell {
-    flex-direction: column;
-  }
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .users-table th,
+  .users-table td { padding: 10px 12px; }
 
-  .sidebar {
-    width: 100%;
-  }
-
-  .main-content {
-    padding: 24px;
-  }
-
-  .topbar h1 {
-    font-size: 32px;
-  }
+  select { min-width: 120px; }
 }

@@ -1,5 +1,9 @@
+<!-- src/app/pages/report-detail/report-detail.html -->
+
 <div class="dashboard-page">
   <div class="dashboard-shell">
+
+    <!-- ── SIDEBAR ──────────────────────────────────────────── -->
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-icon">
@@ -12,6 +16,8 @@
       </div>
 
       <nav class="menu">
+        <div class="menu-section-label">PRINCIPAL</div>
+
         <a routerLink="/dashboard" class="menu-item">
           <i class="fas fa-chart-line"></i>
           <span>Dashboard</span>
@@ -26,87 +32,136 @@
           <i class="fas fa-folder-open"></i>
           <span>Mis Reportes</span>
         </a>
+
+        <div class="menu-section-label">ADMINISTRACIÓN</div>
+
+        <a routerLink="/usuarios" class="menu-item">
+          <i class="fas fa-users"></i>
+          <span>Gestionar Usuarios</span>
+        </a>
+
+        <a routerLink="/mapa" class="menu-item">
+          <i class="fas fa-map-marked-alt"></i>
+          <span>Mapa de Incidentes</span>
+        </a>
+
+        <a routerLink="/estadisticas" class="menu-item">
+          <i class="fas fa-chart-bar"></i>
+          <span>Estadísticas</span>
+        </a>
       </nav>
 
-      <button class="logout-btn" (click)="logout()">
+      <button class="logout-btn" type="button" (click)="logout()">
         <i class="fas fa-sign-out-alt"></i>
         <span>Cerrar sesión</span>
       </button>
     </aside>
 
+    <!-- ── MAIN ─────────────────────────────────────────────── -->
     <main class="main-content">
+
+      <!-- Volver -->
       <div class="page-actions">
-      <button
-        type="button"
-        class="back-btn"
-        routerLink="/reportes"
-      >
-        <i class="fas fa-arrow-left"></i>
-        <span>Volver a Reportes</span>
-      </button>
-    </div>
-      <div *ngIf="loading" class="dashboard-panel">
-        Cargando reporte...
+        <button type="button" class="back-btn" routerLink="/reportes">
+          <i class="fas fa-arrow-left"></i>
+          <span>Volver a Reportes</span>
+        </button>
       </div>
 
+      <!-- Loading -->
+      <div *ngIf="loading" class="dashboard-panel">
+        <p>Cargando reporte...</p>
+      </div>
+
+      <!-- Error -->
       <div *ngIf="error" class="error-panel">
         {{ error }}
       </div>
 
+      <!-- Detalle -->
       <div *ngIf="report" class="dashboard-panel">
+
+        <!-- Cabecera: título + badges -->
         <div class="detail-header">
           <h1>{{ report.titulo }}</h1>
-  
+
+          <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+            <!-- Badge categoría -->
+            <span class="report-category">
+              <i class="fas fa-tag"></i>
+              {{ report.categoria?.nombre_categoria || 'Sin categoría' }}
+            </span>
+
+            <!-- Badge prioridad -->
+            <span
+              class="priority-badge"
+              [ngClass]="{
+                'priority-low':    report.prioridad === 'BAJA',
+                'priority-medium': report.prioridad === 'MEDIA',
+                'priority-high':   report.prioridad === 'ALTA'
+              }"
+            >
+              {{ report.prioridad }}
+            </span>
+          </div>
         </div>
 
+        <!-- Descripción -->
         <p class="description">{{ report.descripcion }}</p>
 
+        <!-- Grid de metadata -->
         <div class="detail-grid">
-          <div>
-            <span class="label">Categoría</span>
-            <strong>{{ report.categoria?.nombre_categoria }}</strong>
-          </div>
 
           <div>
             <span class="label">Estado</span>
-            <strong>{{ report.estados_reporte?.nombre_estado }}</strong>
-          </div>
-
-          <div>
-            <span class="label">Prioridad</span>
-            <strong>{{ report.prioridad }}</strong>
+            <strong class="status-badge">
+              {{ report.estados_reporte?.nombre_estado || 'Pendiente' }}
+            </strong>
           </div>
 
           <div>
             <span class="label">Municipio</span>
-            <strong>{{ report.municipio?.nombre }}</strong>
+            <strong>{{ report.municipio?.nombre || 'No definido' }}</strong>
           </div>
 
           <div>
             <span class="label">Dirección</span>
             <strong>{{ report.direccion || 'No especificada' }}</strong>
           </div>
-          <!-- MAPA -->
+
+          <div>
+            <span class="label">Fecha de reporte</span>
+            <strong>{{ report.fecha_reporte | date:'dd/MM/yyyy HH:mm' }}</strong>
+          </div>
+
+          <div>
+            <span class="label">Reportado por</span>
+            <strong>
+              {{
+                report.anonimo
+                  ? 'Anónimo'
+                  : (report.usuario?.nombre + ' ' + report.usuario?.apellido)
+              }}
+            </strong>
+          </div>
+
+          <!-- Mapa (ocupa todo el ancho) -->
           <div
             *ngIf="report.latitud && report.longitud"
             class="map-section"
           >
-            <h3>Ubicación del reporte</h3>
+            <h3>Ubicación del incidente</h3>
             <div id="detail-map" class="detail-map"></div>
           </div>
 
-          <div>
-            <span class="label">Fecha</span>
-            <strong>{{ report.fecha_reporte | date:'medium' }}</strong>
-          </div>
         </div>
 
-                <div
+        <!-- Evidencias -->
+        <div
           *ngIf="report.evidencias?.length"
           class="evidence-section"
         >
-          <h3>Evidencias</h3>
-
+          <h3>Evidencias adjuntas</h3>
           <div class="evidence-list">
             <a
               *ngFor="let evidencia of report.evidencias"
@@ -116,10 +171,11 @@
               class="evidence-link"
             >
               <i class="fas fa-paperclip"></i>
-              <span>Ver evidencia</span>
+              <span>Ver archivo</span>
             </a>
           </div>
         </div>
+
       </div>
     </main>
   </div>

@@ -1,81 +1,149 @@
+<!-- src/app/pages/login/login.html -->
+
 <div class="login-page">
-  <!-- Panel izquierdo -->
+
+  <!-- Panel izquierdo: Branding -->
   <div class="login-brand">
+    <div class="brand-bg">
+      <div class="bg-grid"></div>
+      <div class="bg-orb orb-1"></div>
+      <div class="bg-orb orb-2"></div>
+      <div class="bg-shield"></div>
+    </div>
+
     <div class="brand-content">
-      <div class="brand-icon">✷</div>
+      <div class="brand-logo">
+        <svg width="44" height="44" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 2L4 8V18C4 25.7 10.2 32.9 18 35C25.8 32.9 32 25.7 32 18V8L18 2Z"
+            fill="#27AE60" opacity="0.18" stroke="#27AE60" stroke-width="1.5"/>
+          <rect x="10" y="13" width="16" height="12" rx="3" fill="#27AE60"/>
+          <circle cx="13.5" cy="19" r="1.5" fill="white"/>
+          <circle cx="18" cy="19" r="1.5" fill="white"/>
+          <circle cx="22.5" cy="19" r="1.5" fill="white"/>
+        </svg>
+        <span class="brand-name">Yo Reporto</span>
+      </div>
 
-      <h1>
-        Seguridad
-        <br />
-        Ciudadana
-      </h1>
+      <div class="brand-tagline">
+        <span class="tagline-dot"></span>
+        Plataforma Oficial
+      </div>
 
-      <p>
+      <h2 class="brand-headline">
+        Reporta hoy,<br>
+        <span class="brand-accent">protege mañana</span>
+      </h2>
+
+      <p class="brand-desc">
         Plataforma para reportar incidentes, adjuntar evidencias
-        y mejorar la seguridad del municipio en tiempo real.
+        y fortalecer la seguridad del municipio en tiempo real.
       </p>
 
+      <div class="brand-stats">
+        <div class="stat">
+          <span class="stat-num">12</span>
+          <span class="stat-label">Reportes</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">98%</span>
+          <span class="stat-label">Respuesta</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">10</span>
+          <span class="stat-label">Municipios</span>
+        </div>
+      </div>
+
       <div class="brand-footer">
-        © 2026 Seguridad Ciudadana. Todos los derechos reservados.
+        © 2026 Yo Reporto · Todos los derechos reservados.
       </div>
     </div>
   </div>
 
-  <!-- Panel derecho -->
+  <!-- Panel derecho: Formulario -->
   <div class="login-form-section">
     <div class="login-card">
-      <div class="logo-text">
-        Seguridad Ciudadana
+
+      <div class="card-logo">
+        <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+          <path d="M18 2L4 8V18C4 25.7 10.2 32.9 18 35C25.8 32.9 32 25.7 32 18V8L18 2Z"
+            fill="#27AE60" opacity="0.15" stroke="#27AE60" stroke-width="1.5"/>
+          <rect x="10" y="13" width="16" height="12" rx="3" fill="#27AE60"/>
+          <circle cx="13.5" cy="19" r="1.5" fill="white"/>
+          <circle cx="18" cy="19" r="1.5" fill="white"/>
+          <circle cx="22.5" cy="19" r="1.5" fill="white"/>
+        </svg>
+        <span class="card-brand-name">Yo Reporto</span>
       </div>
 
-      <h2>Bienvenido</h2>
+      <h1 class="card-title">Bienvenido</h1>
+      <p class="card-subtitle">Inicia sesión para acceder al sistema de reportes.</p>
 
-      <p class="subtitle">
-        Inicia sesión con tu cuenta para acceder al sistema.
-      </p>
-
-      <!-- ERROR -->
+      <!-- Error -->
       <div *ngIf="error" class="error-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
         {{ error }}
       </div>
 
       <form (ngSubmit)="login()">
-        <!-- CORREO -->
+
         <div class="form-group">
-          <label>Correo electrónico</label>
-          <input
-            type="email"
-            name="correo"
-            [(ngModel)]="form.correo"
-            required
-            placeholder="correo@ejemplo.com"
-          />
+          <label for="correo">Correo electrónico</label>
+          <div class="input-wrap">
+            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <input
+              id="correo"
+              type="email"
+              name="correo"
+              [(ngModel)]="form.correo"
+              required
+              placeholder="correo@ejemplo.com"
+            />
+          </div>
         </div>
 
-        <!-- PASSWORD -->
         <div class="form-group">
-          <label>Contraseña</label>
-          <input
-            type="password"
-            name="password"
-            [(ngModel)]="form.password"
-            required
-            placeholder="********"
-          />
+          <label for="password">
+            Contraseña
+          </label>
+          <div class="input-wrap">
+            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              [(ngModel)]="form.password"
+              required
+              placeholder="••••••••"
+            />
+          </div>
         </div>
 
-        <!-- BOTÓN -->
-        <button type="submit">
+        <button type="submit" class="btn-submit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
           Iniciar Sesión
         </button>
+
       </form>
 
-      <p class="register-text">
+      <p class="register-link">
         ¿No tienes cuenta?
-        <a routerLink="/register">
-          Crear una cuenta
-        </a>
+        <a routerLink="/register">Crear una cuenta</a>
       </p>
+
     </div>
   </div>
+
 </div>
