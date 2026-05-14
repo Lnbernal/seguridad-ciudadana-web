@@ -1,0 +1,223 @@
+<!-- REEMPLAZA TODO tu edit-report.html por este archivo completo -->
+
+<div class="dashboard-page">
+  <div class="dashboard-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div>
+          <h2>Yo reporto</h2>
+          <p>Panel Administrativo</p>
+        </div>
+      </div>
+
+      <nav class="menu">
+        <div class="menu-section-label">PRINCIPAL</div>
+
+        <a routerLink="/dashboard" class="menu-item">
+          <i class="fas fa-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a routerLink="/nuevo-reporte" class="menu-item">
+          <i class="fas fa-plus-circle"></i>
+          <span>Nuevo Reporte</span>
+        </a>
+
+        <a routerLink="/reportes" class="menu-item active">
+          <i class="fas fa-folder-open"></i>
+          <span>Mis Reportes</span>
+        </a>
+      </nav>
+
+      <button class="logout-btn" type="button" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Cerrar sesión</span>
+      </button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <!-- TOPBAR -->
+      <div class="topbar">
+        <div>
+          <h1>Editar Reporte</h1>
+          <p>Actualiza la información del reporte seleccionado.</p>
+        </div>
+      </div>
+
+      <!-- LOADING -->
+      <div *ngIf="loading" class="dashboard-panel">
+        <p>Cargando reporte...</p>
+      </div>
+
+      <!-- ERROR -->
+      <div *ngIf="error && !loading" class="error-panel">
+        {{ error }}
+      </div>
+
+      <!-- FORMULARIO -->
+      <div *ngIf="!loading && !error" class="edit-card">
+
+        <!-- SUCCESS -->
+        <div *ngIf="success" class="success-panel">
+          {{ success }}
+        </div>
+
+        <form (ngSubmit)="guardar()" class="edit-form">
+
+          <!-- TÍTULO -->
+          <div class="form-group">
+            <label for="titulo">Título</label>
+            <input
+              id="titulo"
+              type="text"
+              name="titulo"
+              [(ngModel)]="form.titulo"
+              required
+            />
+          </div>
+
+          <!-- DESCRIPCIÓN -->
+          <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <textarea
+              id="descripcion"
+              name="descripcion"
+              [(ngModel)]="form.descripcion"
+              rows="6"
+              required
+            ></textarea>
+          </div>
+
+          <!-- FECHA -->
+          <div class="form-group">
+            <label for="fecha_reporte">Fecha del reporte</label>
+            <input
+              id="fecha_reporte"
+              type="date"
+              name="fecha_reporte"
+              [(ngModel)]="form.fecha_reporte"
+            />
+          </div>
+
+          <!-- PRIORIDAD + DIRECCIÓN -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prioridad">Prioridad</label>
+              <select
+                id="prioridad"
+                name="prioridad"
+                [(ngModel)]="form.prioridad"
+              >
+                <option value="BAJA">BAJA</option>
+                <option value="MEDIA">MEDIA</option>
+                <option value="ALTA">ALTA</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="direccion">Dirección</label>
+              <input
+                id="direccion"
+                type="text"
+                name="direccion"
+                [(ngModel)]="form.direccion"
+              />
+            </div>
+          </div>
+          <!-- PEGA este bloque justo después del bloque de Latitud/Longitud
+     dentro del <form> de edit-report.html -->
+
+<!-- MAPA -->
+<div class="form-group">
+  <label>Ubicación en el mapa</label>
+
+  <div
+    id="edit-map"
+    style="
+      width: 100%;
+      height: 400px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-top: 8px;
+    "
+  ></div>
+
+  <small
+    style="
+      display: block;
+      margin-top: 8px;
+      color: #7a93b8;
+      font-size: 12px;
+    "
+  >
+    Haz clic en el mapa para actualizar la latitud y longitud del reporte.
+  </small>
+</div>
+
+          <!-- LATITUD + LONGITUD -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="latitud">Latitud</label> 
+              <input
+                id="latitud"
+                type="number"
+                step="any"
+                name="latitud"
+                [(ngModel)]="form.latitud"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="longitud">Longitud</label>
+              <input
+                id="longitud"
+                type="number"
+                step="any"
+                name="longitud"
+                [(ngModel)]="form.longitud"
+              />
+            </div>
+          </div>
+
+          <!-- ANÓNIMO -->
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                name="anonimo"
+                [(ngModel)]="form.anonimo"
+              />
+              Reportar como anónimo
+            </label>
+          </div>
+
+
+          <!-- BOTONES -->
+          <div class="form-actions">
+            <a routerLink="/reportes" class="btn-secondary">
+              Cancelar
+            </a>
+
+            <button
+              type="submit"
+              class="btn-primary"
+              [disabled]="saving"
+            >
+              {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </main>
+  </div>
+</div>

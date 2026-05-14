@@ -12,6 +12,7 @@ import { ReportDetail } from './pages/report-detail/report-detail';
 import { AdminUsers } from './pages/admin-users/admin-users';
 import { authGuard } from './guards/auth';
 import { roleGuard } from './guards/role.guard';
+import { EditReport } from './pages/edit-report/edit-report';
 
 export const routes: Routes = [
   // =========================
@@ -79,7 +80,7 @@ export const routes: Routes = [
   // =========================
   {
     path: 'reportes/editar/:id',
-    component: ReportForm,
+    component: EditReport,
     canActivate: [authGuard, roleGuard],
     data: {
       roles: ['ADMIN', 'FUNCIONARIO']
