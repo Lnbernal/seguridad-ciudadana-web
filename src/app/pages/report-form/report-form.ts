@@ -29,6 +29,9 @@ import { Auth } from '../../services/auth';
 export class ReportForm implements OnInit, AfterViewInit {
   loading = false;
 
+  // ── Datos del usuario ──────────────────────────
+  usuario = 'Usuario';
+
   categorias: any[] = [];
   municipios: any[] = [];
 
@@ -64,10 +67,27 @@ export class ReportForm implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.loadCatalogs();
     this.getLocation();
+    this.cargarUsuario();
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => this.initMap(), 100);
+  }
+
+  // ── Carga nombre del usuario desde sesión ──────
+  cargarUsuario(): void {
+    const session = localStorage.getItem('session');
+    if (session) {
+      try {
+        const data = JSON.parse(session);
+        this.usuario =
+          data?.usuario?.nombre ||
+          data?.usuario?.correo ||
+          'Usuario';
+      } catch {
+        this.usuario = 'Usuario';
+      }
+    }
   }
 
   loadCatalogs(): void {
@@ -109,7 +129,6 @@ export class ReportForm implements OnInit, AfterViewInit {
             [this.form.latitud, this.form.longitud],
             16
           );
-
           this.marker.setLatLng([
             this.form.latitud,
             this.form.longitud
@@ -127,7 +146,6 @@ export class ReportForm implements OnInit, AfterViewInit {
             [this.form.latitud, this.form.longitud],
             15
           );
-
           this.marker.setLatLng([
             this.form.latitud,
             this.form.longitud
@@ -136,9 +154,7 @@ export class ReportForm implements OnInit, AfterViewInit {
 
         this.cdr.detectChanges();
       },
-      {
-        enableHighAccuracy: true
-      }
+      { enableHighAccuracy: true }
     );
   }
 
@@ -150,9 +166,7 @@ export class ReportForm implements OnInit, AfterViewInit {
 
     L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {
-        attribution: '&copy; OpenStreetMap contributors'
-      }
+      { attribution: '&copy; OpenStreetMap contributors' }
     ).addTo(this.map);
 
     this.marker = L.marker([lat, lng], {
@@ -181,7 +195,6 @@ export class ReportForm implements OnInit, AfterViewInit {
 
   onFileSelected(event: any): void {
     const file = event.target.files?.[0];
-
     if (file) {
       this.selectedFile = file;
     }
@@ -192,15 +205,11 @@ export class ReportForm implements OnInit, AfterViewInit {
 
     const currentUser = this.auth.getUser();
 
-    console.log('Usuario autenticado:', currentUser);
-
     const userId =
       currentUser?.id_usuario ||
       currentUser?.user?.id_usuario ||
       currentUser?.id ||
       null;
-
-    console.log('ID del usuario detectado:', userId);
 
     if (!userId) {
       alert('No se encontró el usuario autenticado.');
@@ -217,22 +226,18 @@ export class ReportForm implements OnInit, AfterViewInit {
       id_usuario: Number(userId)
     };
 
-    console.log('Payload enviado al backend:', payload);
-
     this.reportService.create(payload).subscribe({
       next: (response: any) => {
         const reportId =
           response?.report?.id_reporte ||
           response?.id_reporte;
 
-        // Si no hay evidencia, terminar aquí
         if (!this.selectedFile || !reportId) {
           alert('Reporte creado correctamente');
           this.router.navigate(['/reportes']);
           return;
         }
 
-        // Subir evidencia
         this.evidenceService
           .upload(this.selectedFile, reportId)
           .subscribe({
@@ -242,28 +247,34 @@ export class ReportForm implements OnInit, AfterViewInit {
             },
             error: (err: any) => {
               console.error('Error subiendo evidencia', err);
-              alert(
-                'Reporte creado, pero la evidencia no pudo subirse'
-              );
+              alert('Reporte creado, pero la evidencia no pudo subirse');
               this.router.navigate(['/reportes']);
             }
           });
       },
-
       error: (err: any) => {
         console.error('Error creando reporte', err);
-        alert(
-          err?.error?.message || 'Error creando reporte'
-        );
+        alert(err?.error?.message || 'Error creando reporte');
         this.loading = false;
         this.cdr.detectChanges();
       }
     });
   }
-  // Agrega este método al final de la clase ReportForm en report-form.ts
 
-logout(): void {
-  this.auth.logout();
-  this.router.navigate(['/login']);
-}
+  // ── Rol del usuario ────────────────────────────
+  isAdmin(): boolean {
+    const user = this.auth.getUser();
+    const role =
+      user?.rol ||
+      user?.role?.nombre_rol ||
+      user?.role?.nombre ||
+      '';
+    return role.toString().trim().toUpperCase() === 'ADMIN';
+  }
+
+  // ── Cerrar sesión ──────────────────────────────
+  logout(): void {
+    this.auth.logout();
+    this.router.navigate(['/login']);
+  }
 }
