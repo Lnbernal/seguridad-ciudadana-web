@@ -32,6 +32,9 @@ export class Dashboard implements OnInit {
   // ── Seguimiento ────────────────────────────────
   seguimiento: any[] = [];
 
+  // ── Loading ────────────────────────────────────
+  loading = true;
+
   constructor(
     private auth: Auth,
     private reportService: Report,
@@ -43,7 +46,9 @@ export class Dashboard implements OnInit {
     this.cargarDashboard();
   }
 
-  // ── Carga de datos ─────────────────────────────
+  // ═══════════════════════════════════════════════
+  // CARGA DE DATOS
+  // ═══════════════════════════════════════════════
 
   cargarUsuario(): void {
     const session = localStorage.getItem('session');
@@ -70,51 +75,170 @@ export class Dashboard implements OnInit {
   }
 
   cargarDashboard(): void {
+    // ── PASO 1: Cargar inmediatamente desde localStorage (sin esperar API) ──
+    const cache = localStorage.getItem('dashboard_cache');
+    if (cache) {
+      try {
+        const data = JSON.parse(cache);
+        this.aplicarDatosDashboard(data);
+        this.loading = false;
+      } catch (e) {
+        console.warn('Cache corrupto, se ignorará');
+      }
+    }
+
+    // ── PASO 2: Llamar a la API y actualizar cache + vista ──
     this.reportService.getAll().subscribe({
       next: (response: any) => {
         const reportes = response?.reports || response || [];
 
-        if (!Array.isArray(reportes)) return;
-
-        // Estadísticas
-        this.totalReportes = reportes.length;
-
-        this.enProceso = reportes.filter((r: any) =>
-          this.obtenerEstado(r).toLowerCase().includes('proceso')
-        ).length;
-
-        this.visualizados = reportes.filter((r: any) =>
-          this.obtenerEstado(r).toLowerCase().includes('visualizado')
-        ).length;
-
-        this.resueltos = reportes.filter((r: any) =>
-          this.obtenerEstado(r).toLowerCase().includes('resuelto')
-        ).length;
-
-        // Pendientes = reportes sin estado avanzado (para el badge del sidebar)
-        this.pendientes = reportes.filter((r: any) =>
-          this.obtenerEstado(r).toLowerCase().includes('pendiente')
-        ).length;
-
-        // Último reporte ordenado por id
-        const ordenados = [...reportes].sort(
-          (a, b) => b.id_reporte - a.id_reporte
-        );
-
-        this.ultimoReporte = ordenados[0] || null;
-
-        if (this.ultimoReporte) {
-          this.generarSeguimiento(this.ultimoReporte);
+        if (!Array.isArray(reportes)) {
+          this.loading = false;
+          return;
         }
+
+        // Procesar datos
+        const datosProcesados = this.procesarReportes(reportes);
+        
+        // Guardar en localStorage para la próxima recarga
+        localStorage.setItem('dashboard_cache', JSON.stringify(datosProcesados));
+        
+        // Aplicar a la vista
+        this.aplicarDatosDashboard(datosProcesados);
+        this.loading = false;
       },
       error: (err) => {
         console.error('Error cargando dashboard:', err);
+        this.loading = false;
+        // Si hay error, los datos del cache ya se mostraron en el PASO 1
       }
     });
   }
 
-  // ── Lógica de negocio ──────────────────────────
+  // ═══════════════════════════════════════════════
+  // PROCESAMIENTO DE DATOS
+  // ═══════════════════════════════════════════════
 
+  /**
+   * Procesa el array de reportes y devuelve un objeto con todas las
+   * estadísticas, último reporte y timeline de seguimiento.
+   */
+  private procesarReportes(reportes: any[]): any {
+    // Estadísticas
+    const totalReportes = reportes.length;
+
+    const enProceso = reportes.filter((r: any) =>
+      this.obtenerEstado(r).toLowerCase().includes('proceso')
+    ).length;
+
+    const visualizados = reportes.filter((r: any) =>
+      this.obtenerEstado(r).toLowerCase().includes('visualizado')
+    ).length;
+
+    const resueltos = reportes.filter((r: any) =>
+      this.obtenerEstado(r).toLowerCase().includes('resuelto')
+    ).length;
+
+    const pendientes = reportes.filter((r: any) =>
+      this.obtenerEstado(r).toLowerCase().includes('pendiente')
+    ).length;
+
+    // Último reporte ordenado por id_reporte descendente
+    const ordenados = [...reportes].sort(
+      (a, b) => b.id_reporte - a.id_reporte
+    );
+    const ultimoReporte = ordenados[0] || null;
+
+    // Generar timeline de seguimiento
+    const seguimiento = ultimoReporte 
+      ? this.generarSeguimientoDesdeReporte(ultimoReporte) 
+      : [];
+
+    return {
+      totalReportes,
+      enProceso,
+      visualizados,
+      resueltos,
+      pendientes,
+      ultimoReporte,
+      seguimiento
+    };
+  }
+
+  /**
+   * Aplica un objeto de datos procesados a las variables de la vista.
+   */
+  private aplicarDatosDashboard(data: any): void {
+    this.totalReportes = data.totalReportes ?? 0;
+    this.enProceso     = data.enProceso ?? 0;
+    this.visualizados  = data.visualizados ?? 0;
+    this.resueltos     = data.resueltos ?? 0;
+    this.pendientes    = data.pendientes ?? 0;
+    this.ultimoReporte = data.ultimoReporte ?? null;
+    this.seguimiento   = data.seguimiento ?? [];
+  }
+
+  /**
+   * Genera el array de seguimiento (timeline) a partir de un reporte.
+   */
+  private generarSeguimientoDesdeReporte(reporte: any): any[] {
+    const estado = this.obtenerEstado(reporte);
+    const seguimiento: any[] = [];
+
+    // 1. Registro inicial (siempre aparece)
+    seguimiento.push({
+      titulo: 'Reporte registrado',
+      fecha:  reporte.fecha_reporte,
+      estado: 'Resuelto'
+    });
+
+    // 2. Visualizado
+    if (['Visualizado', 'En proceso', 'Resuelto'].includes(estado)) {
+      seguimiento.push({
+        titulo: 'Reporte visualizado',
+        fecha:  'Actualizado por el sistema',
+        estado: 'Resuelto'
+      });
+    }
+
+    // 3. En proceso
+    if (['En proceso', 'Resuelto'].includes(estado)) {
+      seguimiento.push({
+        titulo: 'Atención en proceso',
+        fecha:  'En gestión',
+        estado: estado === 'Resuelto' ? 'Resuelto' : 'En proceso'
+      });
+    }
+
+    // 4. Resuelto
+    if (estado === 'Resuelto') {
+      seguimiento.push({
+        titulo: 'Caso resuelto',
+        fecha:  'Finalizado',
+        estado: 'Resuelto'
+      });
+    }
+
+    // 5. Pendiente futuro (si no está resuelto aún)
+    if (estado !== 'Resuelto') {
+      seguimiento.push({
+        titulo: 'Resolución pendiente',
+        fecha:  'Por definir',
+        estado: 'Pendiente'
+      });
+    }
+
+    return seguimiento;
+  }
+
+  // ═══════════════════════════════════════════════
+  // LÓGICA DE NEGOCIO
+  // ═══════════════════════════════════════════════
+
+  /**
+   * Obtiene el nombre del estado de un reporte, desde cualquiera
+   * de las estructuras posibles que vengan del backend.
+   */
   obtenerEstado(reporte: any): string {
     return (
       reporte?.estados_reporte?.nombre_estado ||
@@ -123,53 +247,9 @@ export class Dashboard implements OnInit {
     );
   }
 
-  generarSeguimiento(reporte: any): void {
-    const estado = this.obtenerEstado(reporte);
-
-    // Cada item tiene 'titulo', 'fecha' y 'estado' para los badges y dots
-    this.seguimiento = [
-      {
-        titulo: 'Reporte registrado',
-        fecha:  reporte.fecha_reporte,
-        estado: 'Resuelto'   // el registro siempre se completó
-      }
-    ];
-
-    if (['Visualizado', 'En proceso', 'Resuelto'].includes(estado)) {
-      this.seguimiento.push({
-        titulo: 'Reporte visualizado',
-        fecha:  'Actualizado por el sistema',
-        estado: 'Resuelto'
-      });
-    }
-
-    if (['En proceso', 'Resuelto'].includes(estado)) {
-      this.seguimiento.push({
-        titulo: 'Atención en proceso',
-        fecha:  'En gestión',
-        estado: estado === 'Resuelto' ? 'Resuelto' : 'En proceso'
-      });
-    }
-
-    if (estado === 'Resuelto') {
-      this.seguimiento.push({
-        titulo: 'Caso resuelto',
-        fecha:  'Finalizado',
-        estado: 'Resuelto'
-      });
-    }
-
-    // Paso futuro si aún no está resuelto
-    if (estado !== 'Resuelto') {
-      this.seguimiento.push({
-        titulo: 'Resolución pendiente',
-        fecha:  'Por definir',
-        estado: 'Pendiente'
-      });
-    }
-  }
-
-  // ── Helpers de roles ───────────────────────────
+  // ═══════════════════════════════════════════════
+  // ROLES Y SESIÓN
+  // ═══════════════════════════════════════════════
 
   isAdmin(): boolean {
     const user = this.auth.getUser();
@@ -184,11 +264,14 @@ export class Dashboard implements OnInit {
   }
 
   logout(): void {
+    localStorage.removeItem('dashboard_cache'); // Limpiar cache al salir
     this.auth.logout();
     this.router.navigate(['/login']);
   }
 
-  // ── Helpers de UI (clases CSS dinámicas) ───────
+  // ═══════════════════════════════════════════════
+  // HELPERS DE UI (CLASES CSS DINÁMICAS)
+  // ═══════════════════════════════════════════════
 
   /**
    * Clase del badge de estado para reportes y timeline.
@@ -249,7 +332,9 @@ export class Dashboard implements OnInit {
     return 'dot-gray';
   }
 
-  // ── Utilidades privadas ────────────────────────
+  // ═══════════════════════════════════════════════
+  // UTILIDADES PRIVADAS
+  // ═══════════════════════════════════════════════
 
   /**
    * Genera iniciales desde el nombre completo.

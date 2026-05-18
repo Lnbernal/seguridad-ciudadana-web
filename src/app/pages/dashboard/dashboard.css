@@ -717,13 +717,13 @@
 ══════════════════════════════ */
 @media (max-width: 1024px) {
   .dashboard-shell { grid-template-columns: 1fr; }
-  .sidebar { display: none; }
+  .sidebar { display: none; } 
 }
 
 @media (max-width: 768px) {
   .main-content { padding: 1.5rem 1.25rem 2rem; }
   .topbar { flex-direction: column; }
-
+ 
   .stats-grid,
   .actions-grid,
   .bottom-grid {
