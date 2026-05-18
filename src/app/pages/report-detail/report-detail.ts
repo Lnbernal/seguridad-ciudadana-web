@@ -1,18 +1,8 @@
 // src/app/pages/report-detail/report-detail.ts
 
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  ChangeDetectorRef
-} from '@angular/core';
-
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import {
-  ActivatedRoute,
-  Router,
-  RouterModule
-} from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import * as L from 'leaflet';
 
@@ -22,15 +12,12 @@ import { Auth } from '../../services/auth';
 @Component({
   selector: 'app-report-detail',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    DatePipe
-  ],
+  imports: [CommonModule, RouterModule, DatePipe],
   templateUrl: './report-detail.html',
   styleUrls: ['./report-detail.css']
 })
 export class ReportDetail implements OnInit, AfterViewInit {
+  
   report: any = null;
   loading = true;
   error = '';
@@ -60,8 +47,12 @@ export class ReportDetail implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // El mapa se inicializa después de cargar el reporte.
+    // El mapa se inicializa después de cargar el reporte
   }
+
+  // ═══════════════════════════════════════════════
+  // CARGA DE DATOS
+  // ═══════════════════════════════════════════════
 
   loadReport(id: number): void {
     this.loading = true;
@@ -71,17 +62,10 @@ export class ReportDetail implements OnInit, AfterViewInit {
       next: (data: any) => {
         this.report = data?.report || data;
         this.loading = false;
-
         this.cdr.detectChanges();
 
-        // Inicializar mapa si hay coordenadas
-        if (
-          this.report?.latitud != null &&
-          this.report?.longitud != null
-        ) {
-          setTimeout(() => {
-            this.initMap();
-          }, 200);
+        if (this.report?.latitud != null && this.report?.longitud != null) {
+          setTimeout(() => this.initMap(), 200);
         }
       },
       error: (err: any) => {
@@ -93,102 +77,80 @@ export class ReportDetail implements OnInit, AfterViewInit {
     });
   }
 
-  /**
-   * Inicializa el mapa con Leaflet.
-   */
+  // ═══════════════════════════════════════════════
+  // MAPA
+  // ═══════════════════════════════════════════════
+
   initMap(): void {
-    if (!this.report) {
-      return;
-    }
+    if (!this.report) return;
 
     const lat = Number(this.report.latitud);
     const lng = Number(this.report.longitud);
 
-    if (isNaN(lat) || isNaN(lng)) {
-      return;
-    }
+    if (isNaN(lat) || isNaN(lng)) return;
 
-    // Si ya existe, destruirlo antes de recrearlo
-    if (this.map) {
-      this.map.remove();
-    }
+    if (this.map) this.map.remove();
 
     this.map = L.map('detail-map', {
       center: [lat, lng],
-      zoom: 16
+      zoom: 16,
+      zoomControl: true
     });
 
-    L.tileLayer(
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {
-        attribution: '&copy; OpenStreetMap contributors'
-      }
-    ).addTo(this.map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+      subdomains: 'abcd',
+      maxZoom: 20
+    }).addTo(this.map);
 
     this.marker = L.marker([lat, lng]).addTo(this.map);
 
-    // Ajustar tamaño del mapa
-    setTimeout(() => {
-      this.map.invalidateSize();
-    }, 300);
-
+    setTimeout(() => this.map.invalidateSize(), 300);
     this.mapInitialized = true;
   }
 
-  // ==========================
-  // CONTROL DE ROLES
-  // ==========================
+  // ═══════════════════════════════════════════════
+  // ROLES Y PERMISOS
+  // ═══════════════════════════════════════════════
+
   private getUserRole(): string {
     const user = this.auth.getUser();
-
     return (
       user?.rol ||
       user?.role?.nombre_rol ||
       user?.role?.nombre ||
       ''
-    )
-      .toString()
-      .trim()
-      .toUpperCase();
+    ).toString().trim().toUpperCase();
+  }
+
+  isAdmin(): boolean {
+    const role = this.getUserRole();
+    return role === 'ADMIN' || role === 'ADMINISTRADOR';
   }
 
   canEdit(): boolean {
-    const rol = this.getUserRole();
-
-    return (
-      rol === 'ADMIN' ||
-      rol === 'ADMINISTRADOR' ||
-      rol === 'FUNCIONARIO'
-    );
+    const role = this.getUserRole();
+    return role === 'ADMIN' || role === 'ADMINISTRADOR' || role === 'FUNCIONARIO';
   }
 
   canDelete(): boolean {
-    const rol = this.getUserRole();
-
-    return (
-      rol === 'ADMIN' ||
-      rol === 'ADMINISTRADOR'
-    );
+    return this.isAdmin();
   }
 
-  // ==========================
-  // ELIMINAR REPORTE
-  // ==========================
+  // ═══════════════════════════════════════════════
+  // ACCIONES
+  // ═══════════════════════════════════════════════
+
   deleteReport(): void {
-    if (!this.report?.id_reporte) {
-      return;
-    }
+    if (!this.report?.id_reporte) return;
 
-    const confirmar = confirm(
-      `¿Está seguro de eliminar el reporte "${this.report.titulo}"?`
-    );
-
-    if (!confirmar) {
-      return;
-    }
+    const confirmar = confirm(`¿Está seguro de eliminar el reporte "${this.report.titulo}"?`);
+    if (!confirmar) return;
 
     this.reportService.delete(this.report.id_reporte).subscribe({
       next: () => {
+        localStorage.removeItem('dashboard_cache');
+        localStorage.removeItem('report_list_cache');
         alert('Reporte eliminado correctamente.');
         this.router.navigate(['/reportes']);
       },
@@ -199,11 +161,24 @@ export class ReportDetail implements OnInit, AfterViewInit {
     });
   }
 
-  // ==========================
-  // CERRAR SESIÓN
-  // ==========================
   logout(): void {
+    localStorage.removeItem('dashboard_cache');
+    localStorage.removeItem('report_list_cache');
     this.auth.logout();
     this.router.navigate(['/login']);
+  }
+
+  // ═══════════════════════════════════════════════
+  // HELPERS DE UI
+  // ═══════════════════════════════════════════════
+
+  getEstadoClass(estado: string | undefined): string {
+    if (!estado) return 'estado-default';
+    const e = estado.toLowerCase().trim();
+    if (e.includes('proceso'))     return 'estado-proceso';
+    if (e.includes('resuelto'))    return 'estado-resuelto';
+    if (e.includes('visualizado')) return 'estado-visualizado';
+    if (e.includes('pendiente'))   return 'estado-pendiente';
+    return 'estado-default';
   }
 }

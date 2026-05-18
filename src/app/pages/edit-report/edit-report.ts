@@ -1,19 +1,9 @@
 // src/app/pages/edit-report/edit-report.ts
 
-import {
-  Component,
-  OnInit,
-  ChangeDetectorRef
-} from '@angular/core';
-
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  ActivatedRoute,
-  Router,
-  RouterLink,
-  RouterModule
-} from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import * as L from 'leaflet';
 
@@ -23,105 +13,173 @@ import { Auth } from '../../services/auth';
 @Component({
   selector: 'app-edit-report',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterLink,
-    RouterModule
-  ],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './edit-report.html',
   styleUrls: ['./edit-report.css']
 })
-export class EditReport implements OnInit {
-  id!: number;
+export class EditReport implements OnInit, AfterViewInit {
+
+  // ── Datos ──────────────────────────────────────
+  reportId: number | null = null;
+  loading = true;
+  error = '';
+  success = '';
+  saving = false;
 
   form = {
     titulo: '',
     descripcion: '',
-    prioridad: 'MEDIA',
-    direccion: '',
-    anonimo: false,
-    latitud: '',
-    longitud: '',
     fecha_reporte: '',
-    id_categoria: null as number | null,
-    id_municipio: null as number | null,
-    id_usuario: null as number | null
+    prioridad: 'BAJA',
+    direccion: '',
+    latitud: null as number | null,
+    longitud: null as number | null,
+    anonimo: false
   };
 
-  loading = true;
-  saving = false;
-  error = '';
-  success = '';
-
-  // Leaflet
-  private map: L.Map | null = null;
-  private marker: L.Marker | null = null;
+  // Mapa
+  private map: L.Map | undefined;
+  private marker: L.Marker | undefined;
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private reportService: Report,
     private auth: Auth,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log('Cargando reporte con ID:', this.id);
-    this.loadReport();
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+
+    if (!id) {
+      this.error = 'ID de reporte inválido.';
+      this.loading = false;
+      return;
+    }
+
+    this.reportId = id;
+    this.loadReport(id);
   }
 
-  loadReport(): void {
+  ngAfterViewInit(): void {
+    // El mapa se inicializa después de cargar los datos
+  }
+
+  // ═══════════════════════════════════════════════
+  // CARGA DE DATOS
+  // ═══════════════════════════════════════════════
+
+  loadReport(id: number): void {
     this.loading = true;
     this.error = '';
 
-    this.reportService.getById(this.id).subscribe({
-      next: (report: any) => {
-        console.log('Reporte recibido:', report);
+    this.reportService.getById(id).subscribe({
+      next: (data: any) => {
+        const report = data?.report || data;
 
-        this.form = {
-          titulo: report.titulo || '',
-          descripcion: report.descripcion || '',
-          prioridad: report.prioridad || 'MEDIA',
-          direccion: report.direccion || '',
-          anonimo: report.anonimo ?? false,
-          latitud: report.latitud ? String(report.latitud) : '',
-          longitud: report.longitud ? String(report.longitud) : '',
-          fecha_reporte: report.fecha_reporte
-            ? report.fecha_reporte.substring(0, 10)
-            : '',
-          id_categoria: report.id_categoria ?? null,
-          id_municipio: report.id_municipio ?? null,
-          id_usuario: report.id_usuario ?? null
-        };
+        if (!report) {
+          this.error = 'Reporte no encontrado.';
+          this.loading = false;
+          return;
+        }
 
-        // Mostrar formulario
+        // Llenar formulario
+        this.form.titulo = report.titulo || '';
+        this.form.descripcion = report.descripcion || '';
+        this.form.prioridad = report.prioridad || 'BAJA';
+        this.form.direccion = report.direccion || '';
+        this.form.latitud = report.latitud || null;
+        this.form.longitud = report.longitud || null;
+        this.form.anonimo = report.anonimo || false;
+
+        // Formatear fecha para el input date (YYYY-MM-DD)
+        if (report.fecha_reporte) {
+          const fecha = new Date(report.fecha_reporte);
+          this.form.fecha_reporte = fecha.toISOString().split('T')[0];
+        }
+
         this.loading = false;
         this.cdr.detectChanges();
 
-        // Inicializar mapa cuando el DOM ya exista
-        setTimeout(() => {
-          this.initMap();
-        }, 100);
+        // Inicializar mapa
+        setTimeout(() => this.initMap(), 200);
       },
-
       error: (err: any) => {
         console.error('Error cargando reporte:', err);
-
-        this.error =
-          err?.error?.message ||
-          err?.error?.error ||
-          'No se pudo cargar el reporte.';
-
+        this.error = 'No se pudo cargar el reporte.';
         this.loading = false;
         this.cdr.detectChanges();
       }
     });
   }
 
+  // ═══════════════════════════════════════════════
+  // MAPA
+  // ═══════════════════════════════════════════════
+
+  initMap(): void {
+    const container = document.getElementById('edit-map');
+    if (!container) return;
+
+    // Coordenadas iniciales
+    const lat = this.form.latitud || 4.5709;
+    const lng = this.form.longitud || -74.2973;
+
+    if (this.map) this.map.remove();
+
+    this.map = L.map('edit-map', {
+      center: [lat, lng],
+      zoom: this.form.latitud ? 16 : 6,
+      zoomControl: true
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+      subdomains: 'abcd',
+      maxZoom: 20
+    }).addTo(this.map);
+
+    // Marcador
+    this.marker = L.marker([lat, lng], { draggable: true }).addTo(this.map);
+
+    // Actualizar coordenadas al hacer clic en el mapa
+    this.map.on('click', (e: L.LeafletMouseEvent) => {
+      const { lat: newLat, lng: newLng } = e.latlng;
+
+      this.form.latitud = parseFloat(newLat.toFixed(6));
+      this.form.longitud = parseFloat(newLng.toFixed(6));
+
+      if (this.marker) {
+        this.marker.setLatLng([newLat, newLng]);
+      }
+
+      this.cdr.detectChanges();
+    });
+
+    // Actualizar coordenadas al arrastrar el marcador
+    this.marker.on('dragend', () => {
+      const pos = this.marker!.getLatLng();
+
+      this.form.latitud = parseFloat(pos.lat.toFixed(6));
+      this.form.longitud = parseFloat(pos.lng.toFixed(6));
+
+      this.cdr.detectChanges();
+    });
+
+    setTimeout(() => this.map!.invalidateSize(), 300);
+  }
+
+  // ═══════════════════════════════════════════════
+  // GUARDAR
+  // ═══════════════════════════════════════════════
+
   guardar(): void {
-    if (this.saving) return;
+    if (!this.reportId) return;
+    if (!this.form.titulo.trim() || !this.form.descripcion.trim()) {
+      alert('El título y la descripción son obligatorios.');
+      return;
+    }
 
     this.saving = true;
     this.error = '';
@@ -131,141 +189,61 @@ export class EditReport implements OnInit {
       titulo: this.form.titulo.trim(),
       descripcion: this.form.descripcion.trim(),
       prioridad: this.form.prioridad,
-      direccion: this.form.direccion.trim(),
+      direccion: this.form.direccion || null,
+      latitud: this.form.latitud,
+      longitud: this.form.longitud,
       anonimo: this.form.anonimo,
-
-      latitud:
-        this.form.latitud !== ''
-          ? Number(this.form.latitud)
-          : null,
-
-      longitud:
-        this.form.longitud !== ''
-          ? Number(this.form.longitud)
-          : null,
-
-      fecha_reporte: this.form.fecha_reporte || null,
-
-      id_categoria: this.form.id_categoria,
-      id_municipio: this.form.id_municipio,
-      id_usuario: this.form.id_usuario
+      fecha_reporte: this.form.fecha_reporte || undefined
     };
 
-    console.log('Payload enviado al backend:', payload);
+    this.reportService.update(this.reportId, payload).subscribe({
+      next: (response: any) => {
+        console.log('Reporte actualizado:', response);
 
-    this.reportService.update(this.id, payload).subscribe({
-      next: () => {
+        // Limpiar caches
+        localStorage.removeItem('dashboard_cache');
+        localStorage.removeItem('report_list_cache');
+
+        this.success = 'Reporte actualizado correctamente. Redirigiendo...';
         this.saving = false;
-        this.success = 'Reporte actualizado correctamente.';
         this.cdr.detectChanges();
 
+        // Redirigir después de 1.5 segundos
         setTimeout(() => {
-          this.router.navigate(['/reportes']);
-        }, 1200);
+          this.router.navigate(['/reportes', this.reportId]);
+        }, 1500);
       },
-
       error: (err: any) => {
         console.error('Error actualizando reporte:', err);
-
-        this.error =
-          err?.error?.message ||
-          err?.error?.error ||
-          'No se pudo actualizar el reporte.';
-
+        this.error = err?.error?.message || 'No se pudo actualizar el reporte.';
         this.saving = false;
         this.cdr.detectChanges();
       }
     });
   }
 
-  initMap(): void {
-    const container = document.getElementById('edit-map');
+  // ═══════════════════════════════════════════════
+  // ROLES Y SESIÓN
+  // ═══════════════════════════════════════════════
 
-    if (!container) {
-      console.warn('Contenedor del mapa no encontrado.');
-      return;
-    }
+  private getUserRole(): string {
+    const user = this.auth.getUser();
+    return (
+      user?.rol ||
+      user?.role?.nombre_rol ||
+      user?.role?.nombre ||
+      ''
+    ).toString().trim().toUpperCase();
+  }
 
-    // Destruir mapa previo si existe
-    if (this.map) {
-      this.map.remove();
-      this.map = null;
-      this.marker = null;
-    }
-
-    // Coordenadas iniciales
-    const lat = this.form.latitud
-      ? Number(this.form.latitud)
-      : 4.7110;
-
-    const lng = this.form.longitud
-      ? Number(this.form.longitud)
-      : -74.0721;
-
-    // Configurar iconos de Leaflet
-    delete (L.Icon.Default.prototype as any)._getIconUrl;
-
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl:
-        'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-      iconUrl:
-        'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-      shadowUrl:
-        'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
-    });
-
-    // Crear mapa
-    this.map = L.map('edit-map', {
-      center: [lat, lng],
-      zoom: 15
-    });
-
-    // Capa base
-    L.tileLayer(
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {
-        attribution: '&copy; OpenStreetMap contributors'
-      }
-    ).addTo(this.map);
-
-    // Marcador
-    this.marker = L.marker([lat, lng], {
-      draggable: true
-    }).addTo(this.map);
-
-    // Actualizar al arrastrar
-    this.marker.on('dragend', () => {
-      if (!this.marker) return;
-
-      const pos = this.marker.getLatLng();
-
-      this.form.latitud = pos.lat.toFixed(8);
-      this.form.longitud = pos.lng.toFixed(8);
-
-      this.cdr.detectChanges();
-    });
-
-    // Actualizar al hacer clic
-    this.map.on('click', (e: L.LeafletMouseEvent) => {
-      const { lat, lng } = e.latlng;
-
-      this.form.latitud = lat.toFixed(8);
-      this.form.longitud = lng.toFixed(8);
-
-      if (this.marker) {
-        this.marker.setLatLng([lat, lng]);
-      }
-
-      this.cdr.detectChanges();
-    });
-
-    // Ajustar tamaño del mapa
-    setTimeout(() => {
-      this.map?.invalidateSize();
-    }, 300);
+  isAdmin(): boolean {
+    const role = this.getUserRole();
+    return role === 'ADMIN' || role === 'ADMINISTRADOR';
   }
 
   logout(): void {
+    localStorage.removeItem('dashboard_cache');
+    localStorage.removeItem('report_list_cache');
     this.auth.logout();
     this.router.navigate(['/login']);
   }
