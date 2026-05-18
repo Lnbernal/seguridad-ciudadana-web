@@ -47,7 +47,7 @@
 
         <span class="nav-section-label">Administración</span>
 
-        <a routerLink="/admin/users" routerLinkActive="active" class="nav-item active">
+        <a routerLink="/admin/users" routerLinkActive="active" class="nav-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
             <circle cx="9" cy="7" r="4"/>
@@ -56,7 +56,7 @@
           <span>Gestionar Usuarios</span>
         </a>
 
-        <a routerLink="/admin/mapa" routerLinkActive="active" class="nav-item">
+        <a routerLink="/admin/mapa" routerLinkActive="active" class="nav-item active">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
             <line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>
@@ -99,10 +99,10 @@
         <div class="topbar-left">
           <div class="topbar-badge">
             <span class="badge-dot"></span>
-            Administración
+            Visualización geográfica
           </div>
-          <h1>Gestionar Usuarios</h1>
-          <p>Administra roles, permisos y estado de los usuarios del sistema.</p>
+          <h1>Mapa de Incidentes</h1>
+          <p>Visualiza la distribución geográfica de todos los reportes ciudadanos.</p>
         </div>
 
         <div class="user-chip">
@@ -119,7 +119,7 @@
       <section *ngIf="loading" class="state-panel">
         <div class="state-content">
           <span class="spinner-lg"></span>
-          <p>Cargando usuarios...</p>
+          <p>Cargando mapa...</p>
         </div>
       </section>
 
@@ -133,120 +133,107 @@
         </div>
       </section>
 
-      <!-- Tabla de usuarios -->
-      <section *ngIf="!loading && !error" class="table-panel">
-        <div class="table-wrapper">
-          <table class="users-table">
+      <!-- Mapa + Panel lateral -->
+      <section *ngIf="!loading && !error" class="map-layout">
 
-            <thead>
-              <tr>
-                <th>Usuario</th>
-                <th>Correo</th>
-                <th>Rol Actual</th>
-                <th>Nuevo Rol</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
+        <!-- Panel de filtros -->
+        <aside class="map-sidebar">
+          <div class="filter-block">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+              Filtros
+            </h3>
 
-            <tbody>
-              <tr *ngFor="let user of users">
+            <!-- Categoría -->
+            <div class="filter-group">
+              <label>Categoría</label>
+              <div class="select-wrap">
+                <select [(ngModel)]="filtroCategoria" (change)="aplicarFiltros()">
+                  <option value="">Todas las categorías</option>
+                  <option *ngFor="let cat of categorias" [value]="cat.id_categoria">
+                    {{ cat.nombre_categoria }}
+                  </option>
+                </select>
+                <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </div>
+            </div>
 
-                <!-- Nombre con avatar -->
-                <td>
-                  <div class="user-cell">
-                    <div class="user-avatar-sm">
-                      {{ getIniciales(user.nombre, user.apellido) }}
-                    </div>
-                    <span class="user-name">
-                      {{ user.nombre }} {{ user.apellido }}
-                    </span>
-                  </div>
-                </td>
+            <!-- Prioridad -->
+            <div class="filter-group">
+              <label>Prioridad</label>
+              <div class="priority-filters">
+                <label class="priority-chip" [class.active]="filtroPrioridad === 'ALTA'" (click)="setPrioridad('ALTA')">
+                  <span class="dot alta"></span> Alta
+                </label>
+                <label class="priority-chip" [class.active]="filtroPrioridad === 'MEDIA'" (click)="setPrioridad('MEDIA')">
+                  <span class="dot media"></span> Media
+                </label>
+                <label class="priority-chip" [class.active]="filtroPrioridad === 'BAJA'" (click)="setPrioridad('BAJA')">
+                  <span class="dot baja"></span> Baja
+                </label>
+              </div>
+            </div>
 
-                <!-- Correo -->
-                <td>
-                  <span class="user-email">{{ user.correo }}</span>
-                </td>
+            <!-- Estado -->
+            <div class="filter-group">
+              <label>Estado</label>
+              <div class="select-wrap">
+                <select [(ngModel)]="filtroEstado" (change)="aplicarFiltros()">
+                  <option value="">Todos los estados</option>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="Visualizado">Visualizado</option>
+                  <option value="En proceso">En proceso</option>
+                  <option value="Resuelto">Resuelto</option>
+                </select>
+                <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </div>
+            </div>
 
-                <!-- Rol actual badge -->
-                <td>
-                  <span class="role-badge" [ngClass]="getRoleClass(user)">
-                    {{ getRoleName(user) }}
-                  </span>
-                </td>
+            <button class="btn-clear-filters" (click)="limpiarFiltros()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+              Limpiar filtros
+            </button>
+          </div>
 
-                <!-- Select nuevo rol -->
-                <td>
-                  <div class="select-wrap">
-                    <select [(ngModel)]="user.nuevoRol">
-                      <option *ngFor="let rol of roles" [ngValue]="rol.id_rol">
-                        {{ rol.nombre_rol }}
-                      </option>
-                    </select>
-                    <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="6 9 12 15 18 9"/>
-                    </svg>
-                  </div>
-                </td>
+          <!-- Leyenda -->
+          <div class="legend-block">
+            <h3>Leyenda</h3>
+            <div class="legend-items">
+              <div class="legend-item">
+                <span class="legend-dot alta"></span>
+                <span>Prioridad Alta</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot media"></span>
+                <span>Prioridad Media</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot baja"></span>
+                <span>Prioridad Baja</span>
+              </div>
+            </div>
+          </div>
 
-                <!-- Estado (Activo/Inactivo) -->
-                <td>
-                  <span class="estado-badge" [ngClass]="getEstadoUsuarioClass(user)">
-                    {{ getEstadoUsuarioLabel(user) }}
-                  </span>
-                </td>
+          <!-- Contador -->
+          <div class="counter-block">
+            <span class="counter-value">{{ incidentesFiltrados.length }}</span>
+            <span class="counter-label">Incidentes visibles</span>
+          </div>
+        </aside>
 
-                <!-- Acciones -->
-                <td>
-                  <div class="action-buttons">
-                    <button
-                      type="button"
-                      class="btn-action-sm btn-save"
-                      (click)="updateRole(user)"
-                    >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                      Guardar
-                    </button>
-
-                    <button
-                      type="button"
-                      class="btn-action-sm"
-                      [ngClass]="isUsuarioActivo(user) ? 'btn-deactivate' : 'btn-activate'"
-                      (click)="toggleUserStatus(user)"
-                    >
-                      <svg *ngIf="isUsuarioActivo(user)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
-                      </svg>
-                      <svg *ngIf="!isUsuarioActivo(user)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                      {{ isUsuarioActivo(user) ? 'Desactivar' : 'Activar' }}
-                    </button>
-                  </div>
-                </td>
-
-              </tr>
-
-              <!-- Empty state -->
-              <tr *ngIf="users.length === 0">
-                <td colspan="6" class="empty-state-cell">
-                  <div class="empty-state-content">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                      <circle cx="9" cy="7" r="4"/>
-                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                    </svg>
-                    <p>No hay usuarios registrados.</p>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-
-          </table>
+        <!-- Mapa -->
+        <div class="map-wrapper">
+          <div id="mapaIncidentes" class="map-container"></div>
         </div>
+
       </section>
 
     </main>

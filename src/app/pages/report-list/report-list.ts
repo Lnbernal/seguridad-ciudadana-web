@@ -1,11 +1,6 @@
 // src/app/pages/report-list/report-list.ts
 
-import {
-  Component,
-  OnInit,
-  ChangeDetectorRef
-} from '@angular/core';
-
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 
@@ -51,14 +46,16 @@ interface ReportModel {
 @Component({
   selector: 'app-report-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule
-  ],
+  imports: [CommonModule, RouterModule],
   templateUrl: './report-list.html',
   styleUrls: ['./report-list.css']
 })
 export class ReportList implements OnInit {
+  
+  // ── Datos del usuario ──────────────────────────
+  usuario = 'Usuario';
+
+  // ── Reportes ───────────────────────────────────
   reports: ReportModel[] = [];
   loading = true;
   error = '';
@@ -71,15 +68,41 @@ export class ReportList implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.cargarUsuario();
     this.loadReports();
+  }
+
+  // ═══════════════════════════════════════════════
+  // CARGA DE DATOS
+  // ═══════════════════════════════════════════════
+
+  /**
+   * Carga los datos del usuario desde la sesión.
+   */
+  cargarUsuario(): void {
+    const session = localStorage.getItem('session');
+
+    if (session) {
+      try {
+        const data = JSON.parse(session);
+
+        if (data?.usuario) {
+          this.usuario =
+            data.usuario.nombre ||
+            data.usuario.correo ||
+            'Usuario';
+        }
+      } catch (error) {
+        console.error('Error leyendo la sesión:', error);
+      }
+    }
   }
 
   /**
    * Cargar reportes.
    *
    * Si el usuario es CIUDADANO:
-   * - Solo verá los reportes cuyo id_usuario coincida
-   *   con su id_usuario.
+   * - Solo verá los reportes cuyo id_usuario coincida con el suyo.
    *
    * Si es ADMIN o FUNCIONARIO:
    * - Verá todos los reportes.
@@ -88,6 +111,22 @@ export class ReportList implements OnInit {
     this.loading = true;
     this.error = '';
 
+    // ── PASO 1: Intentar cargar desde cache ──
+    const cache = localStorage.getItem('report_list_cache');
+    if (cache) {
+      try {
+        const cachedReports = JSON.parse(cache);
+        if (Array.isArray(cachedReports)) {
+          this.reports = cachedReports;
+          this.loading = false;
+          this.cdr.detectChanges();
+        }
+      } catch (e) {
+        console.warn('Cache de reportes corrupto, se ignorará');
+      }
+    }
+
+    // ── PASO 2: Cargar desde API ──
     this.reportService.getAll().subscribe({
       next: (response: any) => {
         console.log('Respuesta del backend:', response);
@@ -130,6 +169,10 @@ export class ReportList implements OnInit {
           console.log('Reportes del ciudadano:', reports);
         }
 
+        // Actualizar cache
+        localStorage.setItem('report_list_cache', JSON.stringify(reports));
+
+        // Aplicar a la vista
         this.reports = reports;
         this.loading = false;
         this.cdr.detectChanges();
@@ -137,12 +180,19 @@ export class ReportList implements OnInit {
       error: (err: any) => {
         console.error('Error cargando reportes:', err);
 
-        this.error = 'No se pudieron cargar los reportes.';
+        // Si no hay datos en cache, mostrar error
+        if (this.reports.length === 0) {
+          this.error = 'No se pudieron cargar los reportes. Intenta de nuevo más tarde.';
+        }
         this.loading = false;
         this.cdr.detectChanges();
       }
     });
   }
+
+  // ═══════════════════════════════════════════════
+  // ROLES Y PERMISOS
+  // ═══════════════════════════════════════════════
 
   /**
    * Obtener rol del usuario.
@@ -168,12 +218,12 @@ export class ReportList implements OnInit {
   }
 
   /**
-   * Puede editar:
-   * - ADMIN
-   * - ADMINISTRADOR
-   * - FUNCIONARIO
+   * Verifica si el usuario es administrador.
    */
-
+  isAdmin(): boolean {
+    const role = this.getUserRole();
+    return role === 'ADMIN' || role === 'ADMINISTRADOR';
+  }
 
   /**
    * Puede eliminar:
@@ -181,10 +231,12 @@ export class ReportList implements OnInit {
    * - ADMINISTRADOR
    */
   canDelete(): boolean {
-    const role = this.getUserRole();
-
-    return role.includes('ADMIN');
+    return this.isAdmin();
   }
+
+  // ═══════════════════════════════════════════════
+  // ACCIONES
+  // ═══════════════════════════════════════════════
 
   /**
    * Eliminar reporte.
@@ -200,16 +252,23 @@ export class ReportList implements OnInit {
 
     this.reportService.delete(id).subscribe({
       next: () => {
+        // Eliminar de la lista local
         this.reports = this.reports.filter(
           report => report.id_reporte !== id
         );
+
+        // Actualizar cache
+        localStorage.setItem('report_list_cache', JSON.stringify(this.reports));
+
+        // Limpiar cache del dashboard para que se refresque
+        localStorage.removeItem('dashboard_cache');
 
         alert('Reporte eliminado correctamente.');
         this.cdr.detectChanges();
       },
       error: (err: any) => {
         console.error('Error eliminando reporte:', err);
-        alert('No fue posible eliminar el reporte.');
+        alert('No fue posible eliminar el reporte. Intenta de nuevo.');
       }
     });
   }
@@ -218,7 +277,29 @@ export class ReportList implements OnInit {
    * Cerrar sesión.
    */
   logout(): void {
+    // Limpiar todos los caches
+    localStorage.removeItem('dashboard_cache');
+    localStorage.removeItem('report_list_cache');
+    
     this.auth.logout();
     this.router.navigate(['/login']);
+  }
+
+  // ═══════════════════════════════════════════════
+  // HELPERS DE UI (CLASES CSS DINÁMICAS)
+  // ═══════════════════════════════════════════════
+
+  /**
+   * Clase del badge de estado para reportes.
+   * Usada con [ngClass]="getEstadoClass(report.estados_reporte?.nombre_estado)"
+   */
+  getEstadoClass(estado: string | undefined): string {
+    if (!estado) return 'estado-default';
+    const e = estado.toLowerCase().trim();
+    if (e.includes('proceso'))     return 'estado-proceso';
+    if (e.includes('resuelto'))    return 'estado-resuelto';
+    if (e.includes('visualizado')) return 'estado-visualizado';
+    if (e.includes('pendiente'))   return 'estado-pendiente';
+    return 'estado-default';
   }
 }

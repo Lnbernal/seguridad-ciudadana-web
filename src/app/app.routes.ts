@@ -9,19 +9,17 @@ import { Dashboard } from './pages/dashboard/dashboard';
 import { ReportForm } from './pages/report-form/report-form';
 import { ReportList } from './pages/report-list/report-list';
 import { ReportDetail } from './pages/report-detail/report-detail';
+import { EditReport } from './pages/edit-report/edit-report';
 import { AdminUsers } from './pages/admin-users/admin-users';
+import { AdminMapa } from './pages/admin-mapa/admin-mapa';
 import { authGuard } from './guards/auth';
 import { roleGuard } from './guards/role.guard';
-import { EditReport } from './pages/edit-report/edit-report';
 
 export const routes: Routes = [
-  // =========================
+
+  // ═══════════════════════════════════════════════
   // RUTAS PÚBLICAS
-  // =========================
-  {
-  path: 'admin/users',
-  component: AdminUsers
-  },
+  // ═══════════════════════════════════════════════
   {
     path: '',
     component: Home
@@ -35,57 +33,86 @@ export const routes: Routes = [
     component: Register
   },
 
-  // =========================
-  // DASHBOARD
-  // =========================
+  // ═══════════════════════════════════════════════
+  // DASHBOARD (Autenticado)
+  // ═══════════════════════════════════════════════
   {
     path: 'dashboard',
     component: Dashboard,
     canActivate: [authGuard]
   },
 
-  // =========================
-  // LISTADO DE REPORTES
-  // =========================
+  // ═══════════════════════════════════════════════
+  // REPORTES (Autenticado)
+  // ═══════════════════════════════════════════════
   {
     path: 'reportes',
     component: ReportList,
     canActivate: [authGuard]
   },
-
-  // =========================
-  // CREAR REPORTE
-  // =========================
-  {
-    path: 'nuevo-reporte',
-    component: ReportForm,
-    canActivate: [authGuard, roleGuard],
-    data: {
-      roles: ['ADMIN', 'FUNCIONARIO', 'CIUDADANO']
-    }
-  },
-
-  // =========================
-  // VER DETALLE
-  // =========================
   {
     path: 'reportes/:id',
     component: ReportDetail,
     canActivate: [authGuard]
   },
-
-  // =========================
-  // EDITAR REPORTE
-  // (usa ReportForm por ahora)
-  // =========================
   {
     path: 'reportes/editar/:id',
     component: EditReport,
+    canActivate: [authGuard]
   },
 
-  // =========================
+  // ═══════════════════════════════════════════════
+  // NUEVO REPORTE (Autenticado + Roles)
+  // ═══════════════════════════════════════════════
+  {
+    path: 'nuevo-reporte',
+    component: ReportForm,
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['ADMIN', 'FUNCIONARIO', 'CIUDADANO', 'ALCALDIA', 'OPERADOR']
+    }
+  },
+
+  // ═══════════════════════════════════════════════
+  // ADMINISTRACIÓN (Solo Admin)
+  // ═══════════════════════════════════════════════
+  {
+    path: 'admin/users',
+    component: AdminUsers,
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['ADMIN']
+    }
+  },
+  {
+    path: 'admin/mapa',
+    component: AdminMapa,
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['ADMIN', 'FUNCIONARIO', 'ALCALDIA', 'OPERADOR']
+    }
+  },
+  {
+    path: 'admin/estadisticas',
+    component: AdminMapa, // ← Cambiar cuando tengas Estadísticas
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['ADMIN', 'FUNCIONARIO', 'ALCALDIA']
+    }
+  },
+
+  // ═══════════════════════════════════════════════
+  // CONFIGURACIÓN (Autenticado)
+  // ═══════════════════════════════════════════════
+  {
+    path: 'configuracion',
+    component: Dashboard, // ← Cambiar cuando tengas Configuración
+    canActivate: [authGuard]
+  },
+
+  // ═══════════════════════════════════════════════
   // FALLBACK
-  // =========================
+  // ═══════════════════════════════════════════════
   {
     path: '**',
     redirectTo: ''
