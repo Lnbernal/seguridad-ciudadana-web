@@ -1,0 +1,238 @@
+﻿<div class="dashboard-page">
+  <div class="dashboard-shell fade-in">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <path d="M18 2L4 8V18C4 25.7 10.2 32.9 18 35C25.8 32.9 32 25.7 32 18V8L18 2Z"
+            fill="#27AE60" opacity="0.18" stroke="#27AE60" stroke-width="1.5"/>
+          <rect x="10" y="13" width="16" height="12" rx="3" fill="#27AE60"/>
+          <circle cx="13.5" cy="19" r="1.5" fill="white"/>
+          <circle cx="18" cy="19" r="1.5" fill="white"/>
+          <circle cx="22.5" cy="19" r="1.5" fill="white"/>
+        </svg>
+        <div class="brand-text">
+          <span class="brand-name">Yo Reporto</span>
+          <span class="brand-sub">Panel Ciudadano</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-label">Principal</span>
+        <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+
+        <a routerLink="/nuevo-reporte" routerLinkActive="active" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+          <span>Nuevo Reporte</span>
+        </a>
+
+        <a routerLink="/reportes" routerLinkActive="active" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+          <span>Mis Reportes</span>
+        </a>
+
+        <span class="nav-section-label" *ngIf="isAdmin()">Administración</span>
+        <a *ngIf="isAdmin()" routerLink="/admin/users" routerLinkActive="active" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Gestionar Usuarios</span>
+        </a>
+
+        <a *ngIf="isAdmin()" routerLink="/admin/mapa" routerLinkActive="active" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+            <line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>
+          </svg>
+          <span>Mapa de Incidentes</span>
+        </a>
+
+        <a *ngIf="isAdmin()" routerLink="/admin/estadisticas" routerLinkActive="active" class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+          <span>Estadísticas</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a routerLink="/configuracion" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>Configuración</span>
+        </a>
+        <button type="button" class="logout-btn" (click)="logout()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Cerrar sesión
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-badge">
+            <span class="badge-dot"></span>
+            Analítica del sistema
+          </div>
+          <h1>Estadísticas</h1>
+          <p>Analiza el comportamiento de los reportes por estado, prioridad, categoría y municipio.</p>
+        </div>
+      </header>
+
+      <div *ngIf="loading" class="panel">Cargando estadísticas...</div>
+      <div *ngIf="error" class="error-panel">{{ error }}</div>
+
+      <ng-container *ngIf="!loading && !error">
+        <!-- Tarjetas de resumen con iconos -->
+        <section class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </div>
+            <div>
+              <span class="stat-value">{{ totalReportes }}</span>
+              <span class="stat-label">Reportes totales</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <div>
+              <span class="stat-value">{{ reportesConUbicacion }}</span>
+              <span class="stat-label">Con ubicación</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <div>
+              <span class="stat-value">{{ reportesAlta }}</span>
+              <span class="stat-label">Alta prioridad</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div>
+              <span class="stat-value">{{ tasaResolucion }}%</span>
+              <span class="stat-label">Tasa de resolución</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Gráficas -->
+        <section class="analytics-grid">
+          <div class="panel chart-panel wide-panel">
+            <div class="panel-header"><h2>Actividad reciente</h2></div>
+            <div class="chart-canvas tall-chart">
+              <canvas #activityChart></canvas>
+            </div>
+          </div>
+
+          <div class="panel chart-panel">
+            <div class="panel-header"><h2>Distribución por estado</h2></div>
+            <div class="chart-canvas" style="position: relative;">
+              <canvas #statusChart></canvas>
+              <div class="chart-center-text">{{ totalReportes }} <small>reportes</small></div>
+            </div>
+          </div>
+
+          <div class="panel chart-panel">
+            <div class="panel-header"><h2>Prioridad</h2></div>
+            <div class="chart-canvas">
+              <canvas #priorityChart></canvas>
+            </div>
+          </div>
+
+          <!-- Panel de categorías con barras de progreso -->
+          <div class="panel chart-panel categories-panel">
+            <div class="panel-header"><h2>Categorías principales</h2></div>
+            <div class="categories-list">
+              <div class="category-card" *ngFor="let cat of byCategory; trackBy: trackByLabel">
+                <div class="category-icon" [style.background]="getCategoryColor(cat.label)">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                </div>
+                <div class="category-details">
+                  <div class="category-header">
+                    <span class="category-name">{{ cat.label }}</span>
+                    <span class="category-total">{{ cat.value }}</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="cat.percent" [style.background]="getCategoryColor(cat.label)"></div>
+                  </div>
+                  <div class="category-percent">{{ cat.percent }}% del total</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel chart-panel">
+            <div class="panel-header"><h2>Municipios</h2></div>
+            <div class="chart-canvas">
+              <canvas #municipalityChart></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Reportes recientes -->
+        <section class="panel recent-panel">
+          <div class="panel-header"><h2>Reportes recientes</h2></div>
+          <div class="recent-list">
+            <a class="recent-item" *ngFor="let report of recentReports" [routerLink]="['/reportes', report.id_reporte]">
+              <div class="recent-item-meta">
+                <h3>{{ report.titulo }}</h3>
+                <div class="recent-item-tags">
+                  <span class="tag">{{ getCategory(report) }}</span>
+                  <span class="tag">{{ getMunicipality(report) }}</span>
+                </div>
+              </div>
+              <span class="status-badge" [ngClass]="getStatusClass(report)">{{ getStatus(report) }}</span>
+            </a>
+          </div>
+        </section>
+      </ng-container>
+    </main>
+  </div>
+</div>

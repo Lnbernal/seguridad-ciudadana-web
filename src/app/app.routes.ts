@@ -12,6 +12,7 @@ import { ReportDetail } from './pages/report-detail/report-detail';
 import { EditReport } from './pages/edit-report/edit-report';
 import { AdminUsers } from './pages/admin-users/admin-users';
 import { AdminMapa } from './pages/admin-mapa/admin-mapa';
+import { Statistics } from './pages/statistics/statistics';
 import { authGuard } from './guards/auth';
 import { Configuracion } from './pages/configuracion/configuracion';
 import { roleGuard } from './guards/role.guard';
@@ -95,7 +96,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin/estadisticas',
-    component: AdminMapa, // ← Cambiar cuando tengas Estadísticas
+    component: Statistics,
     canActivate: [authGuard, roleGuard],
     data: {
       roles: ['ADMIN', 'FUNCIONARIO', 'ALCALDIA']
