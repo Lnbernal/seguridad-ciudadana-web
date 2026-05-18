@@ -78,4 +78,19 @@ export class User {
       }
     );
   }
+    changePassword(
+    id: number,
+    data: {
+      currentPassword: string;
+      newPassword: string;
+    }
+  ): Observable<any> {
+    return this.http.put<any>(
+      `${this.apiUrl}/${id}/password`,
+      data,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
 }

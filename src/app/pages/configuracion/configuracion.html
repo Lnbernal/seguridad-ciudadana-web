@@ -1,0 +1,343 @@
+<div class="dashboard-page">
+  <div class="dashboard-shell fade-in">
+
+    <!-- ═══════════ SIDEBAR ═══════════ -->
+    <aside class="sidebar">
+
+      <div class="sidebar-brand">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <path d="M18 2L4 8V18C4 25.7 10.2 32.9 18 35C25.8 32.9 32 25.7 32 18V8L18 2Z"
+            fill="#27AE60" opacity="0.18" stroke="#27AE60" stroke-width="1.5"/>
+          <rect x="10" y="13" width="16" height="12" rx="3" fill="#27AE60"/>
+          <circle cx="13.5" cy="19" r="1.5" fill="white"/>
+          <circle cx="18" cy="19" r="1.5" fill="white"/>
+          <circle cx="22.5" cy="19" r="1.5" fill="white"/>
+        </svg>
+        <div class="brand-text">
+          <span class="brand-name">Yo Reporto</span>
+          <span class="brand-sub">Panel Ciudadano</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-label">Principal</span>
+
+        <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+
+        <a routerLink="/nuevo-reporte" routerLinkActive="active" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+          <span>Nuevo Reporte</span>
+        </a>
+
+        <a routerLink="/reportes" routerLinkActive="active" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+          <span>Mis Reportes</span>
+        </a>
+
+        <span class="nav-section-label" *ngIf="isAdmin()">Administración</span>
+
+        <a *ngIf="isAdmin()" routerLink="/admin/users" routerLinkActive="active" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Gestionar Usuarios</span>
+        </a>
+
+        <a *ngIf="isAdmin()" routerLink="/admin/mapa" routerLinkActive="active" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+            <line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>
+          </svg>
+          <span>Mapa de Incidentes</span>
+        </a>
+
+        <a *ngIf="isAdmin()" routerLink="/admin/estadisticas" routerLinkActive="active" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+          <span>Estadísticas</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a routerLink="/configuracion" routerLinkActive="active" class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>Configuración</span>
+        </a>
+        <button type="button" class="logout-btn" (click)="logout()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Cerrar sesión
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- ═══════════ MAIN ═══════════ -->
+    <main class="main-content">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-badge">
+            <span class="badge-dot"></span>
+            Ajustes del sistema
+          </div>
+          <h1>Configuración</h1>
+          <p>Administra tu perfil, seguridad y preferencias de la cuenta.</p>
+        </div>
+
+        <div class="user-chip">
+          <div class="user-avatar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <span>{{ usuario }}</span>
+        </div>
+      </header>
+
+      <!-- Mensajes de estado -->
+      <section *ngIf="successMessage" class="state-panel state-success">
+        <div class="state-content">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <p>{{ successMessage }}</p>
+        </div>
+      </section>
+
+      <section *ngIf="errorMessage" class="state-panel state-error">
+        <div class="state-content">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <p>{{ errorMessage }}</p>
+        </div>
+      </section>
+
+      <!-- Grid de configuración -->
+      <section class="config-grid">
+
+        <!-- BLOQUE 1: Perfil -->
+        <div class="config-block">
+          <div class="config-block-header">
+            <div class="block-icon bi-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <div>
+              <h3>Información del Perfil</h3>
+              <p>Actualiza tus datos personales.</p>
+            </div>
+          </div>
+
+          <form (ngSubmit)="updateProfile()" class="config-form">
+            <div class="form-group">
+              <label for="nombre">Nombre</label>
+              <input id="nombre" type="text" [(ngModel)]="profile.nombre" name="nombre" required/>
+            </div>
+            <div class="form-group">
+              <label for="apellido">Apellido</label>
+              <input id="apellido" type="text" [(ngModel)]="profile.apellido" name="apellido" required/>
+            </div>
+            <div class="form-group">
+              <label for="correo">Correo electrónico</label>
+              <input id="correo" type="email" [(ngModel)]="profile.correo" name="correo" required disabled/>
+              <small>El correo no se puede cambiar.</small>
+            </div>
+            <button type="submit" [disabled]="savingProfile" class="btn-save">
+              <svg *ngIf="!savingProfile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span class="spinner-sm" *ngIf="savingProfile"></span>
+              {{ savingProfile ? 'Guardando...' : 'Guardar Perfil' }}
+            </button>
+          </form>
+        </div>
+
+        <!-- BLOQUE 2: Seguridad -->
+        <div class="config-block">
+          <div class="config-block-header">
+            <div class="block-icon bi-green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <div>
+              <h3>Cambiar Contraseña</h3>
+              <p>Actualiza tu contraseña de acceso.</p>
+            </div>
+          </div>
+
+          <form (ngSubmit)="changePassword()" class="config-form">
+            <div class="form-group">
+              <label for="currentPassword">Contraseña actual</label>
+              <div class="input-wrap">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <input
+                  id="currentPassword"
+                  [type]="showCurrentPassword ? 'text' : 'password'"
+                  [(ngModel)]="passwordForm.currentPassword"
+                  name="currentPassword"
+                  required
+                  placeholder="••••••••"
+                />
+                <button type="button" class="toggle-password" (click)="showCurrentPassword = !showCurrentPassword">
+                  <svg *ngIf="!showCurrentPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  <svg *ngIf="showCurrentPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="newPassword">Nueva contraseña</label>
+              <div class="input-wrap">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <input
+                  id="newPassword"
+                  [type]="showNewPassword ? 'text' : 'password'"
+                  [(ngModel)]="passwordForm.newPassword"
+                  name="newPassword"
+                  required
+                  minlength="6"
+                  placeholder="Mínimo 6 caracteres"
+                />
+                <button type="button" class="toggle-password" (click)="showNewPassword = !showNewPassword">
+                  <svg *ngIf="!showNewPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  <svg *ngIf="showNewPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword">Confirmar contraseña</label>
+              <div class="input-wrap">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <input
+                  id="confirmPassword"
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  [(ngModel)]="passwordForm.confirmPassword"
+                  name="confirmPassword"
+                  required
+                  placeholder="Repite la nueva contraseña"
+                />
+              </div>
+            </div>
+
+            <button type="submit" [disabled]="savingPassword" class="btn-save">
+              <svg *ngIf="!savingPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span class="spinner-sm" *ngIf="savingPassword"></span>
+              {{ savingPassword ? 'Cambiando...' : 'Cambiar Contraseña' }}
+            </button>
+          </form>
+        </div>
+
+        <!-- BLOQUE 3: Preferencias -->
+        <div class="config-block">
+          <div class="config-block-header">
+            <div class="block-icon bi-amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
+            <div>
+              <h3>Preferencias</h3>
+              <p>Personaliza tu experiencia en la plataforma.</p>
+            </div>
+          </div>
+
+          <div class="config-form">
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-title">Notificaciones por correo</span>
+                <span class="toggle-desc">Recibe actualizaciones cuando cambie el estado de tus reportes.</span>
+              </div>
+              <label class="toggle-label">
+                <input type="checkbox" [(ngModel)]="preferences.emailNotifications" (change)="savePreferences()"/>
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-title">Resumen semanal</span>
+                <span class="toggle-desc">Recibe un resumen de la actividad de tus reportes cada semana.</span>
+              </div>
+              <label class="toggle-label">
+                <input type="checkbox" [(ngModel)]="preferences.weeklySummary" (change)="savePreferences()"/>
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- BLOQUE 4: Zona de Peligro -->
+        <div class="config-block danger-zone">
+          <div class="config-block-header">
+            <div class="block-icon bi-red">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </div>
+            <div>
+              <h3>Zona de Peligro</h3>
+              <p>Acciones irreversibles para tu cuenta.</p>
+            </div>
+          </div>
+
+          <div class="danger-content">
+            <p>Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor, asegúrate de que deseas continuar.</p>
+            <button type="button" class="btn-danger" (click)="confirmDeleteAccount()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+              Eliminar Cuenta
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+</div>
