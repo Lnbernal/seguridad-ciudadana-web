@@ -13,6 +13,7 @@ import { EditReport } from './pages/edit-report/edit-report';
 import { AdminUsers } from './pages/admin-users/admin-users';
 import { AdminMapa } from './pages/admin-mapa/admin-mapa';
 import { authGuard } from './guards/auth';
+import { Configuracion } from './pages/configuracion/configuracion';
 import { roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
@@ -106,7 +107,7 @@ export const routes: Routes = [
   // ═══════════════════════════════════════════════
   {
     path: 'configuracion',
-    component: Dashboard, // ← Cambiar cuando tengas Configuración
+    component: Configuracion,
     canActivate: [authGuard]
   },
 
