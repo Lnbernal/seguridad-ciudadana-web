@@ -167,36 +167,41 @@ export class AdminUsers implements OnInit {
   }
 
   /**
-   * Activar o desactivar un usuario.
-   */
-  toggleUserStatus(user: any): void {
-    const nuevoEstado = !user.activo;
-    const accion = nuevoEstado ? 'activar' : 'desactivar';
+ * Activar o desactivar un usuario.
+ */
+toggleUserStatus(user: any): void {
+  const nuevoEstado = !user.activo;
+  const accion = nuevoEstado ? 'activar' : 'desactivar';
 
-    const confirmar = confirm(
-      `¿Deseas ${accion} al usuario "${user.nombre} ${user.apellido}"?`
-    );
+  const confirmar = confirm(
+    `¿Deseas ${accion} al usuario "${user.nombre} ${user.apellido}"?`
+  );
 
-    if (!confirmar) return;
+  if (!confirmar) return;
 
-    console.log(`${accion} usuario:`, user.id_usuario);
+  console.log(`${accion} usuario:`, user.id_usuario);
 
-    const payload = {
-      activo: nuevoEstado
-    };
+  // Enviar el campo 'estado' como lo espera el backend
+  const payload = {
+    estado: nuevoEstado  // true = activo, false = inactivo
+  };
 
-    this.userService.update(user.id_usuario, payload).subscribe({
-      next: (response: any) => {
-        console.log(`Usuario ${accion}do:`, response);
-        alert(`Usuario ${accion}do correctamente.`);
-        this.loadUsers();
-      },
-      error: (err: any) => {
-        console.error(`Error al ${accion} usuario:`, err);
-        alert(err?.error?.message || `No se pudo ${accion} al usuario.`);
-      }
-    });
-  }
+  this.userService.update(user.id_usuario, payload).subscribe({
+    next: (response: any) => {
+      console.log(`Usuario ${accion}do:`, response);
+      
+      // Actualizar el estado local inmediatamente
+      user.activo = nuevoEstado;
+      
+      alert(`Usuario ${accion}do correctamente.`);
+      this.cdr.detectChanges();
+    },
+    error: (err: any) => {
+      console.error(`Error al ${accion} usuario:`, err);
+      alert(err?.error?.message || `No se pudo ${accion} al usuario.`);
+    }
+  });
+}
 
   /**
    * Cerrar sesión.
