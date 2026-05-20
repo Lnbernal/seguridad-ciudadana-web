@@ -27,7 +27,9 @@ export class AdminUsers implements OnInit {
     { id_rol: 3, nombre_rol: 'ADMIN' },
     { id_rol: 4, nombre_rol: 'ALCALDIA' },
     { id_rol: 2, nombre_rol: 'OPERADOR' },
-    { id_rol: 1, nombre_rol: 'CIUDADANO' }
+    { id_rol: 1, nombre_rol: 'CIUDADANO' },
+    { id_rol: 5, nombre_rol: 'SUPERVISOR' },
+    { id_rol: 6, nombre_rol: 'FUNCIONARIO' }
   ];
 
   constructor(
@@ -236,6 +238,8 @@ toggleUserStatus(user: any): void {
     if (role.includes('alcaldia'))  return 'role-alcaldia';
     if (role.includes('operador'))  return 'role-operador';
     if (role.includes('ciudadano')) return 'role-ciudadano';
+    if (role.includes('supervisor')) return 'role-supervisor';
+    if (role.includes('funcionario')) return 'role-funcionario';
     return 'role-ciudadano';
   }
 
