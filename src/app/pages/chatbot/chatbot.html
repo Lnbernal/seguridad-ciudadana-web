@@ -1,0 +1,71 @@
+<div class="chatbot-container">
+
+  <button
+    class="chat-button"
+    (click)="toggleChat()"
+    *ngIf="!abierto"
+  >
+    Chat
+  </button>
+
+  <div
+    class="chat-window"
+    *ngIf="abierto"
+  >
+
+    <div class="chat-header">
+
+      <div>
+        <h3>Eduard Porras</h3>
+        <span>Asistente virtual</span>
+      </div>
+
+      <button
+        class="close-button"
+        (click)="toggleChat()"
+      >
+        X
+      </button>
+
+    </div>
+
+    <div class="chat-body">
+
+      <div
+        *ngFor="let item of mensajes"
+        class="mensaje"
+        [ngClass]="{
+          'usuario': item.usuario,
+          'bot': !item.usuario
+        }"
+      >
+        {{ item.texto }}
+      </div>
+
+      <div
+        *ngIf="cargando"
+        class="mensaje bot"
+      >
+        Escribiendo...
+      </div>
+
+    </div>
+
+    <div class="chat-footer">
+
+      <input
+        type="text"
+        [(ngModel)]="mensaje"
+        placeholder="Escribe un mensaje..."
+        (keyup.enter)="enviarMensaje()"
+      >
+
+      <button (click)="enviarMensaje()">
+        Enviar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
