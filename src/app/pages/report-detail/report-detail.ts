@@ -9,6 +9,21 @@ import * as L from 'leaflet';
 import { Report } from '../../services/report';
 import { Auth } from '../../services/auth';
 
+const TRANSICIONES: Record<string, Record<string, string[]>> = {
+  PENDIENTE: {
+    OPERADOR: ['EN_PROCESO', 'RECHAZADO'],
+    ALCALDIA: ['EN_PROCESO', 'RECHAZADO']
+  },
+  EN_PROCESO: {
+    FUNCIONARIO: ['EN_ESPERA', 'RESUELTO'],
+    ALCALDIA: ['RESUELTO']
+  },
+  EN_ESPERA: {
+    FUNCIONARIO: ['EN_PROCESO', 'RESUELTO'],
+    ALCALDIA: ['RESUELTO']
+  }
+};
+
 @Component({
   selector: 'app-report-detail',
   standalone: true,
@@ -25,6 +40,10 @@ export class ReportDetail implements OnInit, AfterViewInit {
   map!: L.Map;
   marker!: L.Marker;
   mapInitialized = false;
+
+  // Flujo de revisión
+  estadosPermitidos: string[] = [];
+  cambioEnProceso = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -61,6 +80,12 @@ export class ReportDetail implements OnInit, AfterViewInit {
     this.reportService.getById(id).subscribe({
       next: (data: any) => {
         this.report = data?.report || data;
+
+        if (this.report?.estados_reporte?.nombre_estado) {
+          this.report.estados_reporte.nombre_estado = this.report.estados_reporte.nombre_estado.trim().toUpperCase();
+        }
+
+        this.calcularEstadosPermitidos();
         this.loading = false;
         this.cdr.detectChanges();
 
@@ -115,12 +140,31 @@ export class ReportDetail implements OnInit, AfterViewInit {
 
   private getUserRole(): string {
     const user = this.auth.getUser();
-    return (
+
+    const rawRole =
       user?.rol ||
+      user?.role ||
+      user?.nombre_rol ||
+      user?.rol_nombre ||
+      user?.rol?.nombre_rol ||
+      user?.rol?.nombre ||
       user?.role?.nombre_rol ||
       user?.role?.nombre ||
-      ''
-    ).toString().trim().toUpperCase();
+      '';
+
+    const rol = this.normalizarClave(rawRole);
+    console.log('DEBUG FLUJO - getUserRole retorna:', rol);
+    return rol;
+  }
+
+  private normalizarClave(valor: any): string {
+    return (valor || '')
+      .toString()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase()
+      .replace(/\s+/g, '_');
   }
 
   isAdmin(): boolean {
@@ -140,6 +184,76 @@ export class ReportDetail implements OnInit, AfterViewInit {
   // ═══════════════════════════════════════════════
   // ACCIONES
   // ═══════════════════════════════════════════════
+
+  // ═══════════════════════════════════════════════
+  // FLUJO DE REVISIÓN
+  // ═══════════════════════════════════════════════
+
+  private calcularEstadosPermitidos(): void {
+    if (!this.report) return;
+
+    const estadoActual = this.normalizarClave(
+      this.report.estados_reporte?.nombre_estado ||
+      this.report.estado?.nombre_estado ||
+      this.report.ReportStatus?.nombre_estado ||
+      ''
+    );
+    const rol = this.getUserRole();
+
+    console.log('DEBUG FLUJO - estadoActual:', estadoActual);
+    console.log('DEBUG FLUJO - rol:', rol);
+
+    if (!estadoActual) {
+      console.log('DEBUG FLUJO - No hay estadoActual, saliendo');
+      return;
+    }
+    if (!rol) {
+      console.log('DEBUG FLUJO - No hay rol, saliendo');
+      return;
+    }
+
+    const transiciones = TRANSICIONES[estadoActual];
+    console.log('DEBUG FLUJO - transiciones para', estadoActual, ':', transiciones);
+
+    if (!transiciones) {
+      this.estadosPermitidos = [];
+      console.log('DEBUG FLUJO - No hay transiciones para ese estado');
+      return;
+    }
+
+    this.estadosPermitidos = transiciones[rol] || [];
+    console.log('DEBUG FLUJO - estadosPermitidos final:', this.estadosPermitidos);
+  }
+
+  cambiarEstado(nuevoEstado: string): void {
+    if (!this.report?.id_reporte || this.cambioEnProceso) return;
+
+    this.cambioEnProceso = true;
+
+    this.reportService.changeStatus(this.report.id_reporte, nuevoEstado).subscribe({
+      next: () => {
+        alert(`Estado cambiado a "${nuevoEstado}" correctamente.`);
+        this.cambioEnProceso = false;
+        this.loadReport(this.report.id_reporte); // Recargar
+      },
+      error: (err: any) => {
+        console.error('Error cambiando estado:', err);
+        alert(err?.error?.message || 'No se pudo cambiar el estado.');
+        this.cambioEnProceso = false;
+      }
+    });
+  }
+
+  getEstadoNombre(estado: string): string {
+    const nombres: Record<string, string> = {
+      'PENDIENTE': 'Pendiente',
+      'EN_PROCESO': 'En proceso',
+      'EN_ESPERA': 'En espera',
+      'RESUELTO': 'Resuelto',
+      'RECHAZADO': 'Rechazado'
+    };
+    return nombres[estado] || estado;
+  }
 
   deleteReport(): void {
     if (!this.report?.id_reporte) return;

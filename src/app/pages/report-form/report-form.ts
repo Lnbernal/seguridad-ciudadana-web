@@ -218,10 +218,20 @@ export class ReportForm implements OnInit, AfterViewInit {
       return;
     }
 
+    const categoryId = Number(this.form.id_categoria);
+    const municipalityId = Number(this.form.id_municipio);
+
+    if (!categoryId || !municipalityId) {
+      alert('Selecciona una categoria y un municipio antes de crear el reporte.');
+      this.loading = false;
+      this.cdr.detectChanges();
+      return;
+    }
+
     const payload = {
       ...this.form,
-      id_categoria: Number(this.form.id_categoria),
-      id_municipio: Number(this.form.id_municipio),
+      id_categoria: categoryId,
+      id_municipio: municipalityId,
       id_estado: 1,
       id_usuario: Number(userId)
     };
@@ -233,6 +243,8 @@ export class ReportForm implements OnInit, AfterViewInit {
           response?.id_reporte;
 
         if (!this.selectedFile || !reportId) {
+          localStorage.removeItem('dashboard_cache');
+          localStorage.removeItem('report_list_cache');
           alert('Reporte creado correctamente');
           this.router.navigate(['/reportes']);
           return;
@@ -242,6 +254,8 @@ export class ReportForm implements OnInit, AfterViewInit {
           .upload(this.selectedFile, reportId)
           .subscribe({
             next: () => {
+              localStorage.removeItem('dashboard_cache');
+              localStorage.removeItem('report_list_cache');
               alert('Reporte y evidencia guardados correctamente');
               this.router.navigate(['/reportes']);
             },

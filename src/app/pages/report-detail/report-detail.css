@@ -464,6 +464,57 @@
 .priority-alta .priority-dot  { background: #f87171; box-shadow: 0 0 6px rgba(248,113,113,0.5); }
 
 /* ── Description ── */
+.flow-actions h3 svg {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 6px;
+  stroke: currentColor;
+}
+
+.flow-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.flow-btn:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.24);
+}
+
+.flow-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.flow-funcionario {
+  margin-top: 12px;
+}
+
+.flow-funcionario label {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-right: 8px;
+}
+
+.flow-funcionario select {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: #e2e8f0;
+}
+
 .detail-description {
   margin-bottom: 1.5rem;
   padding-bottom: 1.2rem;

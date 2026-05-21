@@ -23,12 +23,12 @@ export class AdminUsers implements OnInit {
   loading = true;
   error = '';
 
+  // Roles definitivos (5) sin SUPERVISOR
   roles = [
+    { id_rol: 1, nombre_rol: 'CIUDADANO' },
+    { id_rol: 2, nombre_rol: 'OPERADOR' },
     { id_rol: 3, nombre_rol: 'ADMIN' },
     { id_rol: 4, nombre_rol: 'ALCALDIA' },
-    { id_rol: 2, nombre_rol: 'OPERADOR' },
-    { id_rol: 1, nombre_rol: 'CIUDADANO' },
-    { id_rol: 5, nombre_rol: 'SUPERVISOR' },
     { id_rol: 6, nombre_rol: 'FUNCIONARIO' }
   ];
 
@@ -86,23 +86,23 @@ export class AdminUsers implements OnInit {
           this.users = [];
         }
 
-        // Normalizar datos
-        this.users = this.users.map((user: any) => ({
-          ...user,
-          nuevoRol: Number(
+        // Normalizar datos (ahora incluye nombre_rol)
+        this.users = this.users.map((user: any) => {
+          const rolId = Number(
             user.id_rol ||
             user.rol?.id_rol ||
             user.role?.id_rol ||
             1
-          ),
-          id_rol: Number(
-            user.id_rol ||
-            user.rol?.id_rol ||
-            user.role?.id_rol ||
-            1
-          ),
-          activo: this.normalizarEstado(user.activo ?? user.estado)
-        }));
+          );
+          const nombreRol = this.extraerNombreRol(user);
+          return {
+            ...user,
+            nuevoRol: rolId,
+            id_rol: rolId,
+            nombre_rol: nombreRol,
+            activo: this.normalizarEstado(user.activo ?? user.estado)
+          };
+        });
 
         this.loading = false;
         this.cdr.detectChanges();
@@ -123,7 +123,8 @@ export class AdminUsers implements OnInit {
   isAdmin(): boolean {
     const user = this.auth.getUser();
 
-    if (Number(user?.id_rol) === 1) return true;
+    // CORREGIDO: 3 = ADMIN, no 1
+    if (Number(user?.id_rol) === 3) return true;
 
     const role =
       user?.rol ||
@@ -157,9 +158,14 @@ export class AdminUsers implements OnInit {
 
     this.userService.updateRole(user.id_usuario, nuevoRol).subscribe({
       next: (response: any) => {
-        console.log('Rol actualizado:', response);
+        // Feedback inmediato en la UI
+        const rolEncontrado = this.roles.find(r => r.id_rol === nuevoRol);
+        user.nombre_rol = rolEncontrado ? rolEncontrado.nombre_rol : 'Sin rol';
+        user.id_rol = nuevoRol;
+        this.cdr.detectChanges();
+
         alert('Rol actualizado correctamente.');
-        this.loadUsers();
+        this.loadUsers(); // Recargar desde el backend
       },
       error: (err: any) => {
         console.error('Error actualizando rol:', err);
@@ -169,41 +175,37 @@ export class AdminUsers implements OnInit {
   }
 
   /**
- * Activar o desactivar un usuario.
- */
-toggleUserStatus(user: any): void {
-  const nuevoEstado = !user.activo;
-  const accion = nuevoEstado ? 'activar' : 'desactivar';
+   * Activar o desactivar un usuario.
+   */
+  toggleUserStatus(user: any): void {
+    const nuevoEstado = !user.activo;
+    const accion = nuevoEstado ? 'activar' : 'desactivar';
 
-  const confirmar = confirm(
-    `¿Deseas ${accion} al usuario "${user.nombre} ${user.apellido}"?`
-  );
+    const confirmar = confirm(
+      `¿Deseas ${accion} al usuario "${user.nombre} ${user.apellido}"?`
+    );
 
-  if (!confirmar) return;
+    if (!confirmar) return;
 
-  console.log(`${accion} usuario:`, user.id_usuario);
+    console.log(`${accion} usuario:`, user.id_usuario);
 
-  // Enviar el campo 'estado' como lo espera el backend
-  const payload = {
-    estado: nuevoEstado  // true = activo, false = inactivo
-  };
+    const payload = {
+      estado: nuevoEstado
+    };
 
-  this.userService.update(user.id_usuario, payload).subscribe({
-    next: (response: any) => {
-      console.log(`Usuario ${accion}do:`, response);
-      
-      // Actualizar el estado local inmediatamente
-      user.activo = nuevoEstado;
-      
-      alert(`Usuario ${accion}do correctamente.`);
-      this.cdr.detectChanges();
-    },
-    error: (err: any) => {
-      console.error(`Error al ${accion} usuario:`, err);
-      alert(err?.error?.message || `No se pudo ${accion} al usuario.`);
-    }
-  });
-}
+    this.userService.update(user.id_usuario, payload).subscribe({
+      next: (response: any) => {
+        console.log(`Usuario ${accion}do:`, response);
+        user.activo = nuevoEstado;
+        alert(`Usuario ${accion}do correctamente.`);
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error(`Error al ${accion} usuario:`, err);
+        alert(err?.error?.message || `No se pudo ${accion} al usuario.`);
+      }
+    });
+  }
 
   /**
    * Cerrar sesión.
@@ -224,23 +226,23 @@ toggleUserStatus(user: any): void {
   }
 
   getRoleName(user: any): string {
-    return (
-      user.rol?.nombre_rol ||
-      user.role?.nombre_rol ||
-      user.nombre_rol ||
-      'Sin rol'
-    );
+    if (user.nombre_rol && user.nombre_rol !== 'Sin rol') return user.nombre_rol;
+    const roleObj = user.role || user.Role || {};
+    if (roleObj.nombre_rol) return roleObj.nombre_rol;
+    if (typeof user.rol === 'string' && user.rol.trim().length > 0) return user.rol.trim();
+    const id = Number(user.id_rol || roleObj.id_rol || 0);
+    const encontrado = this.roles.find(r => r.id_rol === id);
+    return encontrado ? encontrado.nombre_rol : 'Sin rol';
   }
 
   getRoleClass(user: any): string {
     const role = this.getRoleName(user).toLowerCase().trim();
-    if (role.includes('admin'))     return 'role-admin';
-    if (role.includes('alcaldia'))  return 'role-alcaldia';
-    if (role.includes('operador'))  return 'role-operador';
-    if (role.includes('ciudadano')) return 'role-ciudadano';
-    if (role.includes('supervisor')) return 'role-supervisor';
-    if (role.includes('funcionario')) return 'role-funcionario';
-    return 'role-ciudadano';
+    if (role.includes('admin'))        return 'role-admin';
+    if (role.includes('alcaldia'))     return 'role-alcaldia';
+    if (role.includes('operador'))     return 'role-operador';
+    if (role.includes('funcionario'))  return 'role-funcionario';
+    if (role.includes('ciudadano'))    return 'role-ciudadano';
+    return 'role-default';
   }
 
   isUsuarioActivo(user: any): boolean {
@@ -256,8 +258,17 @@ toggleUserStatus(user: any): void {
   }
 
   // ═══════════════════════════════════════════════
-  // UTILIDADES
+  // UTILIDADES PRIVADAS
   // ═══════════════════════════════════════════════
+
+  private extraerNombreRol(user: any): string {
+    if (user.role?.nombre_rol) return user.role.nombre_rol;
+    if (user.Role?.nombre_rol) return user.Role.nombre_rol;
+    if (typeof user.rol === 'string' && user.rol.trim().length > 0) return user.rol.trim();
+    const id = Number(user.id_rol || user.role?.id_rol || user.Role?.id_rol || 0);
+    const encontrado = this.roles.find(r => r.id_rol === id);
+    return encontrado ? encontrado.nombre_rol : 'Sin rol';
+  }
 
   private normalizarEstado(estado: any): boolean {
     if (typeof estado === 'boolean') return estado;

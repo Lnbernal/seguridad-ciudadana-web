@@ -664,3 +664,24 @@
   .action-buttons { flex-direction: column; }
   .btn-action-sm { width: 100%; justify-content: center; }
 }
+/* Badge para Funcionario (rojo) */
+.role-funcionario {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  position: relative;
+  padding-left: 22px; /* espacio para el círculo */
+}
+
+/* Círculo rojo */
+.role-funcionario::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f87171;
+}

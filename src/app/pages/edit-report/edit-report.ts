@@ -25,6 +25,8 @@ export class EditReport implements OnInit, AfterViewInit {
   error = '';
   success = '';
   saving = false;
+  reportOriginal: any = null;
+  idEstadoPendiente = 1;
 
   form = {
     titulo: '',
@@ -83,6 +85,8 @@ export class EditReport implements OnInit, AfterViewInit {
           this.loading = false;
           return;
         }
+
+        this.reportOriginal = report;
 
         // Llenar formulario
         this.form.titulo = report.titulo || '';
@@ -185,7 +189,7 @@ export class EditReport implements OnInit, AfterViewInit {
     this.error = '';
     this.success = '';
 
-    const payload = {
+    const payload: any = {
       titulo: this.form.titulo.trim(),
       descripcion: this.form.descripcion.trim(),
       prioridad: this.form.prioridad,
@@ -195,6 +199,17 @@ export class EditReport implements OnInit, AfterViewInit {
       anonimo: this.form.anonimo,
       fecha_reporte: this.form.fecha_reporte || undefined
     };
+
+    const estadoOriginal = this.normalizarClave(
+      this.reportOriginal?.estados_reporte?.nombre_estado ||
+      this.reportOriginal?.estado?.nombre_estado ||
+      this.reportOriginal?.ReportStatus?.nombre_estado ||
+      ''
+    );
+
+    if (estadoOriginal === 'RECHAZADO') {
+      payload.id_estado = this.idEstadoPendiente;
+    }
 
     this.reportService.update(this.reportId, payload).subscribe({
       next: (response: any) => {
@@ -234,6 +249,16 @@ export class EditReport implements OnInit, AfterViewInit {
       user?.role?.nombre ||
       ''
     ).toString().trim().toUpperCase();
+  }
+
+  private normalizarClave(valor: any): string {
+    return (valor || '')
+      .toString()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase()
+      .replace(/\s+/g, '_');
   }
 
   isAdmin(): boolean {
